@@ -1,0 +1,267 @@
+
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.ds{background:#0d1221;min-height:100vh;font-family:var(--font-sans);color:#fff;padding-bottom:40px}
+
+.topbar{background:#0d1221;border-bottom:1px solid #1a2235;padding:0 32px;height:56px;display:flex;align-items:center;justify-content:space-between}
+.tb-left{display:flex;align-items:center;gap:10px}
+.logomark{width:26px;height:26px;background:#F5A623;border-radius:6px;display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:#0d1221}
+.brand{font-size:14px;font-weight:600;color:#fff}
+.brand span{color:#F5A623}
+.tb-right{font-size:12px;color:#3d5068;display:flex;align-items:center;gap:6px}
+.live-dot{width:6px;height:6px;border-radius:50%;background:#4ADE80}
+
+.page{padding:32px 32px 0}
+
+.greeting{margin-bottom:28px}
+.greeting-name{font-size:22px;font-weight:600;color:#fff;margin-bottom:4px}
+.greeting-sub{font-size:14px;color:#3d5068}
+.greeting-sub span{color:#F5A623}
+
+.roi-card{background:#111827;border:1px solid #1a2235;border-radius:14px;padding:24px 28px;display:flex;align-items:center;justify-content:space-between;margin-bottom:20px}
+.roi-main{}
+.roi-eyebrow{font-size:11px;color:#3d5068;text-transform:uppercase;letter-spacing:.08em;margin-bottom:8px}
+.roi-big{font-size:42px;font-weight:700;color:#4ADE80;line-height:1}
+.roi-context{font-size:13px;color:#3d5068;margin-top:6px}
+.roi-context strong{color:#8899aa;font-weight:500}
+.roi-stats{display:flex;gap:32px}
+.rs{text-align:center}
+.rs-val{font-size:22px;font-weight:600;color:#fff}
+.rs-val.amber{color:#F5A623}
+.rs-val.coral{color:#E8756A}
+.rs-label{font-size:11px;color:#3d5068;margin-top:3px}
+
+.section-label{font-size:11px;font-weight:500;text-transform:uppercase;letter-spacing:.08em;color:#3d5068;margin-bottom:12px}
+
+.approvals-section{margin-bottom:24px}
+.approval-cards{display:flex;flex-direction:column;gap:8px}
+.appr{background:#111827;border:1px solid #1a2235;border-radius:10px;padding:16px 20px;display:flex;align-items:center;gap:16px}
+.appr-left{flex:1}
+.appr-title{font-size:14px;font-weight:500;color:#e2e8f0;margin-bottom:3px}
+.appr-desc{font-size:12px;color:#3d5068}
+.appr-center{text-align:center;min-width:80px}
+.appr-amt{font-size:16px;font-weight:600;color:#F5A623}
+.appr-conf{font-size:11px;color:#3d5068;margin-top:2px}
+.appr-btns{display:flex;gap:8px;flex-shrink:0}
+.btn-yes{background:#F5A623;border:none;color:#0d1221;font-size:12px;font-weight:600;padding:7px 16px;border-radius:7px;cursor:pointer;font-family:var(--font-sans)}
+.btn-no{background:transparent;border:1px solid #1a2235;color:#3d5068;font-size:12px;padding:7px 14px;border-radius:7px;cursor:pointer;font-family:var(--font-sans)}
+
+.two-col{display:grid;grid-template-columns:1fr 300px;gap:16px}
+
+.panel{background:#111827;border:1px solid #1a2235;border-radius:12px;overflow:hidden}
+.ph{padding:14px 20px;border-bottom:1px solid #1a2235;display:flex;align-items:center;justify-content:space-between}
+.ph-title{font-size:13px;font-weight:500;color:#8899aa}
+.ph-meta{font-size:11px;color:#3d5068}
+
+.feed-item{padding:14px 20px;border-bottom:1px solid #111827;display:flex;align-items:flex-start;gap:12px}
+.feed-item:last-child{border-bottom:none}
+.feed-item:nth-child(odd){background:#111827}
+.feed-item:nth-child(even){background:#0f1624}
+.fi-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px}
+.fi-body{flex:1}
+.fi-top{display:flex;align-items:baseline;justify-content:space-between;gap:8px;margin-bottom:3px}
+.fi-action{font-size:13px;color:#e2e8f0;font-weight:500}
+.fi-time{font-size:11px;color:#3d5068;flex-shrink:0}
+.fi-detail{font-size:12px;color:#3d5068;line-height:1.5}
+.fi-chip{display:inline-block;font-size:10px;border-radius:4px;padding:1px 7px;margin-top:5px;font-weight:500}
+.chip-green{background:#0f1e14;color:#4ADE80}
+.chip-amber{background:#2a1f0a;color:#F5A623}
+.chip-blue{background:#0f1a2a;color:#60a5fa}
+.chip-gray{background:#1a1f2a;color:#4a5568}
+
+.metrics-col{display:flex;flex-direction:column;gap:12px}
+.metric-card{background:#111827;border:1px solid #1a2235;border-radius:12px;padding:18px 20px}
+.met-label{font-size:11px;color:#3d5068;text-transform:uppercase;letter-spacing:.07em;margin-bottom:8px}
+.met-val{font-size:28px;font-weight:600;line-height:1}
+.met-val.green{color:#4ADE80}
+.met-val.amber{color:#F5A623}
+.met-val.coral{color:#E8756A}
+.met-val.white{color:#fff}
+.met-foot{font-size:12px;color:#3d5068;margin-top:5px}
+.met-foot.pos{color:#4ADE80}
+</style>
+
+<div class="ds">
+  <div class="topbar">
+    <div class="tb-left">
+      <div class="logomark">⚡</div>
+      <div class="brand">AI<span>Ops</span></div>
+    </div>
+    <div class="tb-right">
+      <div class="live-dot"></div>
+      Live &nbsp;·&nbsp; Arctic Air HVAC &nbsp;·&nbsp; March 14, 2026
+    </div>
+  </div>
+
+  <div class="page">
+
+    <div class="greeting">
+      <div class="greeting-name">Good morning, Jake 👋</div>
+      <div class="greeting-sub">Your AI ran <span>47 actions</span> while you slept. Here's what needs your attention.</div>
+    </div>
+
+    <div class="roi-card">
+      <div class="roi-main">
+        <div class="roi-eyebrow">Revenue recovered this month</div>
+        <div class="roi-big">$4,320</div>
+        <div class="roi-context">Your retainer is <strong>$1,500</strong> — you're up <strong style="color:#4ADE80">$2,820</strong> net this month</div>
+      </div>
+      <div class="roi-stats">
+        <div class="rs"><div class="rs-val amber">28</div><div class="rs-label">Leads captured</div></div>
+        <div class="rs"><div class="rs-val">6</div><div class="rs-label">Slots filled</div></div>
+        <div class="rs"><div class="rs-val">31s</div><div class="rs-label">Avg response</div></div>
+      </div>
+    </div>
+
+    <div class="approvals-section">
+      <div class="section-label">Needs your approval · 3 items</div>
+      <div class="approval-cards">
+        <div class="appr">
+          <div class="appr-left">
+            <div class="appr-title">Send annual maintenance contract to Chen family</div>
+            <div class="appr-desc">AI is 71% confident — holding for your call before sending</div>
+          </div>
+          <div class="appr-center">
+            <div class="appr-amt">$1,200/yr</div>
+            <div class="appr-conf">71% confident</div>
+          </div>
+          <div class="appr-btns">
+            <button class="btn-yes">Approve</button>
+            <button class="btn-no">Skip</button>
+          </div>
+        </div>
+        <div class="appr">
+          <div class="appr-left">
+            <div class="appr-title">Send replacement system quote to Williams household</div>
+            <div class="appr-desc">Tech flagged unit as near end-of-life on today's job</div>
+          </div>
+          <div class="appr-center">
+            <div class="appr-amt">~$4,800</div>
+            <div class="appr-conf">78% confident</div>
+          </div>
+          <div class="appr-btns">
+            <button class="btn-yes">Approve</button>
+            <button class="btn-no">Skip</button>
+          </div>
+        </div>
+        <div class="appr">
+          <div class="appr-left">
+            <div class="appr-title">Escalate Thompson invoice to you directly</div>
+            <div class="appr-desc">Day 21 — $520 still unpaid, automated reminders exhausted</div>
+          </div>
+          <div class="appr-center">
+            <div class="appr-amt">$520 owed</div>
+            <div class="appr-conf">Ready to hand off</div>
+          </div>
+          <div class="appr-btns">
+            <button class="btn-yes">Got it</button>
+            <button class="btn-no">Remind later</button>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="two-col">
+      <div>
+        <div class="section-label">What your AI did today</div>
+        <div class="panel">
+          <div class="ph">
+            <div class="ph-title">Action log</div>
+            <div class="ph-meta">47 total · showing recent</div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-dot" style="background:#4ADE80"></div>
+            <div class="fi-body">
+              <div class="fi-top">
+                <div class="fi-action">Emergency lead captured + SMS sent</div>
+                <div class="fi-time">4 min ago</div>
+              </div>
+              <div class="fi-detail">Mike D. texted about AC failure with kids at home. Urgency scored 9/10. Response sent in 22 seconds.</div>
+              <span class="fi-chip chip-green">Auto-executed · 94% confident</span>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-dot" style="background:#F5A623"></div>
+            <div class="fi-body">
+              <div class="fi-top">
+                <div class="fi-action">Cancellation slot filled · $175 recovered</div>
+                <div class="fi-time">18 min ago</div>
+              </div>
+              <div class="fi-detail">2:00 PM opening texted to 4 waitlist customers. Sarah K. replied YES. Job created in Jobber.</div>
+              <span class="fi-chip chip-green">Auto-executed · 91% confident</span>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-dot" style="background:#F5A623"></div>
+            <div class="fi-body">
+              <div class="fi-top">
+                <div class="fi-action">Missed call recovered</div>
+                <div class="fi-time">41 min ago</div>
+              </div>
+              <div class="fi-detail">(319) 555-0182 called and hung up. SMS sent within 60 seconds. Awaiting reply.</div>
+              <span class="fi-chip chip-amber">Waiting on customer</span>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-dot" style="background:#60a5fa"></div>
+            <div class="fi-body">
+              <div class="fi-top">
+                <div class="fi-action">Customer confirmed booking via SMS</div>
+                <div class="fi-time">1 hr ago</div>
+              </div>
+              <div class="fi-detail">Tom R. replied YES to slot offer. Job scheduled for 10 AM and synced to Jobber automatically.</div>
+              <span class="fi-chip chip-blue">Jobber updated</span>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-dot" style="background:#4ADE80"></div>
+            <div class="fi-body">
+              <div class="fi-top">
+                <div class="fi-action">Invoice reminder sent</div>
+                <div class="fi-time">2 hr ago</div>
+              </div>
+              <div class="fi-detail">Johnson family · $340 outstanding. Day 7 friendly reminder sent via SMS.</div>
+              <span class="fi-chip chip-green">Auto-executed</span>
+            </div>
+          </div>
+          <div class="feed-item">
+            <div class="fi-dot" style="background:#3d5068"></div>
+            <div class="fi-body">
+              <div class="fi-top">
+                <div class="fi-action">Review request sent</div>
+                <div class="fi-time">3 hr ago</div>
+              </div>
+              <div class="fi-detail">Martinez job completed. Thank-you SMS + Google review link sent 30 minutes after job close.</div>
+              <span class="fi-chip chip-gray">Retention action</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="metrics-col">
+        <div class="section-label">This month at a glance</div>
+        <div class="metric-card">
+          <div class="met-label">Emergency leads</div>
+          <div class="met-val amber">$1,500</div>
+          <div class="met-foot pos">10 calls recovered @ $150 avg</div>
+        </div>
+        <div class="metric-card">
+          <div class="met-label">Cancellations filled</div>
+          <div class="met-val green">$1,050</div>
+          <div class="met-foot pos">6 open slots filled</div>
+        </div>
+        <div class="metric-card">
+          <div class="met-label">Dispatcher time saved</div>
+          <div class="met-val white">$1,770</div>
+          <div class="met-foot">~70 hrs of routine tasks automated</div>
+        </div>
+        <div class="metric-card">
+          <div class="met-label">Invoices outstanding</div>
+          <div class="met-val coral">$860</div>
+          <div class="met-foot">3 reminders running automatically</div>
+        </div>
+      </div>
+    </div>
+
+  </div>
+</div>
