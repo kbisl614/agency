@@ -1,295 +1,76 @@
-"use client";
-
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
-import { useState, useRef, useEffect } from "react";
 
-interface FAQItem {
-  question: string;
-  answer: string;
-  category: "integration" | "pricing" | "performance" | "setup" | "general";
-}
+export const metadata = {
+  title: "Questions | Fieldline AI",
+  description: "Plain answers for HVAC contractors. No tech talk.",
+};
 
-const faqItems: FAQItem[] = [
-  // Integration & Setup
+const faqs = [
   {
-    category: "integration",
-    question: "How does DispatchHVAC integrate with my CRM?",
-    answer:
-      "We connect directly to your Jobber, ServiceTitan, or HouseCall Pro API. Once you authorize our integration, we read your incoming calls and cancellations in real-time, then route them to your techs automatically. Setup takes 30-60 minutes.",
+    q: "How does it actually work?",
+    a: "You miss a call. We text the customer back in 60 seconds. We ask what's wrong and help get them booked. Same thing at night — leads that come in after hours get a reply in under 30 seconds. And if a job cancels, we text your waiting customers right away to fill the slot. You don't do anything.",
   },
   {
-    category: "setup",
-    question: "Do I have to change how I run my business?",
-    answer:
-      "No. The system works alongside your existing CRM. Your team keeps using Jobber/ServiceTitan/HCP exactly as they do now. We just add an automated layer on top that captures leads you would have missed. Zero workflow changes.",
+    q: "Do I have to switch my software?",
+    a: "No. We plug into Jobber, ServiceTitan, or HouseCall Pro. Your guys keep using what they know. We work in the background. Nothing changes on your end.",
   },
   {
-    category: "integration",
-    question: "What if I don't have a CRM yet?",
-    answer:
-      "We set up Jobber for you as part of your trial. Cost is $3,500/month (includes Jobber account creation and configuration). We handle the entire setup—you just get the leads.",
+    q: "What if I'm too busy to set this up?",
+    a: "We do the setup. All of it. You get on a quick call with us — about 20 minutes — and we handle the rest. We connect to your software, set up the messaging, and test everything before it goes live.",
   },
   {
-    category: "setup",
-    question: "How long does onboarding take?",
-    answer:
-      "Initial setup is 2-3 hours. We'll call within 2 hours of your submission to confirm your CRM details and schedule the integration window. Most contractors are live within 24 hours of starting their trial.",
-  },
-
-  // Performance & Guarantee
-  {
-    category: "performance",
-    question: "What's the performance guarantee?",
-    answer:
-      "We guarantee 5 emergency leads + 2 cancellation fills in your first 30 days. If we don't hit those numbers, your first month is free. That's a minimum of $1,200 in recovered revenue with zero risk on your part.",
+    q: "How do you know what to say to my customers?",
+    a: "We learn your business before we touch anything. The messages sound like they came from your office — not a robot. You read them and approve before we go live. If you don't like the tone, we change it.",
   },
   {
-    category: "performance",
-    question: "How many leads can I realistically expect?",
-    answer:
-      "Most HVAC contractors capture 8-15 emergency calls and 3-5 cancellation fills in their first 30 days. We're conservative with the guarantee (5 leads + 2 fills) because most beat it. Your actual numbers depend on call volume in your area.",
+    q: "What happens during the free trial?",
+    a: "We set it all up for free. For 30 days it runs and we track every call caught, every lead answered, every open slot filled. If we don't get you at least 5 new leads and fill 2 open jobs, your first month is free. Zero risk.",
   },
   {
-    category: "performance",
-    question: "Will this actually fill my cancellations?",
-    answer:
-      "Yes. We monitor your schedule and automatically route inbound emergency calls to your open slots. Technicians accept or reject via text. Average fill rate is 60-70% of routed calls. You make the final call on every job.",
+    q: "What does $1,500 a month get me?",
+    a: "Every missed call gets a text back. Every after-hours lead gets answered. Every cancellation gets filled — automatically. No one to hire. No phone tag. Most contractors get back $4,000–$8,600 a month. The math works fast.",
   },
   {
-    category: "performance",
-    question: "What if I'm too busy to take the leads?",
-    answer:
-      "Pause the system anytime. You control when you're receiving leads via a simple dashboard. If you're at capacity, just toggle it off. No penalties, no contracts.",
-  },
-
-  // Pricing & Billing
-  {
-    category: "pricing",
-    question: "Why does ServiceTitan cost more than Jobber?",
-    answer:
-      "ServiceTitan integration is more complex—deeper API access, larger contractor base, and different sync requirements. Jobber is simpler to integrate, so it's $1,500/month. ServiceTitan is $2,000/month. The guarantee is the same either way.",
+    q: "How soon can you get this running?",
+    a: "Most contractors are live within a week. We do a short call, connect to your software, and you're off. No long setup. No training. No headaches.",
   },
   {
-    category: "pricing",
-    question: "Is there a contract?",
-    answer:
-      "No contract. Month-to-month billing. Cancel anytime with 30 days notice. We don't lock you in because the system speaks for itself.",
+    q: "What if the messages say something wrong?",
+    a: "You read and approve everything before it goes live. Nothing gets sent to a customer without you seeing it first. And we review how things are going every month so we can fix anything that's off.",
   },
   {
-    category: "pricing",
-    question: "When does billing start?",
-    answer:
-      "Billing starts after your 30-day free trial ends—on day 31. If you don't hit the guarantee (5 leads + 2 fills), we credit your first month and you start on day 61 for free. Either way, nothing until the trial is done.",
+    q: "Why not just hire someone to answer the phone?",
+    a: "A good dispatcher runs $38k–$55k a year. They can't work at 2am. They take sick days. They miss calls too. We run around the clock for $1,500/month. Ten recovered calls a month pays for itself.",
   },
   {
-    category: "pricing",
-    question: "What if I want to add team members or scale usage?",
-    answer:
-      "Pricing is flat—unlimited team members, unlimited calls, unlimited routing. One rate covers everything. No per-lead fees, no surprises.",
-  },
-
-  // General Questions
-  {
-    category: "general",
-    question: "Is my data safe?",
-    answer:
-      "Yes. We use Supabase (enterprise-grade security) for data storage, SSL encryption for all API calls, and never store payment information. We comply with standard data protection practices and your data is yours—export it anytime.",
-  },
-  {
-    category: "general",
-    question: "What if I want to migrate away later?",
-    answer:
-      "We'll export all your lead history and customer data in standard formats. Migration is straightforward. But we're confident you won't want to leave once the leads start coming in.",
-  },
-  {
-    category: "general",
-    question: "Do you do tech support?",
-    answer:
-      "Yes. Email support during business hours, phone support for critical issues. Your trial includes dedicated onboarding—we're invested in your success.",
-  },
-  {
-    category: "general",
-    question: "What if something breaks?",
-    answer:
-      "We monitor the system 24/7 for integration issues. If something goes down, we fix it immediately and credit your account for any downtime. Uptime SLA: 99.5%.",
+    q: "What if I want to quit?",
+    a: "Cancel anytime. No contracts. No cancellation fees. Just say the word and we shut it down. That's it.",
   },
 ];
 
-export const metadata = {
-  title: "FAQ | DispatchHVAC",
-  description:
-    "Common questions about DispatchHVAC HVAC dispatch automation, integrations, pricing, and guarantees.",
-};
-
-function FAQPageContent() {
-  const [activeIndex, setActiveIndex] = useState<number | null>(null);
-  const [activeCategory, setActiveCategory] = useState<string>("all");
-  const sectionRef = useRef<HTMLDivElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
-
-  const categories = [
-    { id: "all", label: "All Questions" },
-    { id: "integration", label: "Integration & Setup" },
-    { id: "pricing", label: "Pricing & Billing" },
-    { id: "performance", label: "Performance" },
-    { id: "general", label: "General" },
-  ];
-
-  const filteredFAQ =
-    activeCategory === "all"
-      ? faqItems
-      : faqItems.filter((item) => item.category === activeCategory);
-
+export default function FAQPage() {
   return (
     <>
       <Header />
-      <main>
-        <section
-          ref={sectionRef}
-          className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden"
-        >
-          {/* Background Pattern */}
-          <div className="absolute inset-0 section-pattern opacity-30" />
-
-          <div className="container mx-auto px-4 lg:px-8 relative">
-            {/* Header */}
-            <div
-              className={`max-w-2xl mx-auto text-center mb-16 ${
-                isVisible ? "animate-fade-in-up" : "opacity-0"
-              }`}
-            >
-              <p className="text-amber-600 font-semibold text-sm uppercase tracking-wider mb-4">
-                Questions? We Have Answers
-              </p>
-              <h1 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-6">
-                Frequently Asked Questions
-              </h1>
-              <p className="text-lg text-slate-600">
-                Everything HVAC contractors need to know about DispatchHVAC,
-                integrations, pricing, and our performance guarantee.
-              </p>
-            </div>
-
-            {/* Category Filter */}
-            <div
-              className={`flex flex-wrap justify-center gap-3 mb-12 ${
-                isVisible ? "animate-fade-in-up delay-100" : "opacity-0"
-              }`}
-            >
-              {categories.map((cat) => (
-                <button
-                  key={cat.id}
-                  onClick={() => setActiveCategory(cat.id)}
-                  className={`px-6 py-2 rounded-full text-sm font-semibold transition-all ${
-                    activeCategory === cat.id
-                      ? "bg-amber-500 text-slate-950"
-                      : "bg-white text-slate-900 border border-slate-200 hover:bg-slate-100"
-                  }`}
-                >
-                  {cat.label}
-                </button>
-              ))}
-            </div>
-
-            {/* FAQ Accordion */}
-            <div
-              className={`max-w-3xl mx-auto space-y-4 ${
-                isVisible ? "animate-fade-in-up delay-200" : "opacity-0"
-              }`}
-            >
-              {filteredFAQ.map((item, idx) => (
-                <div
-                  key={idx}
-                  className="border border-slate-200 rounded-lg bg-white overflow-hidden hover:shadow-md transition-shadow"
-                >
-                  <button
-                    onClick={() =>
-                      setActiveIndex(activeIndex === idx ? null : idx)
-                    }
-                    className="w-full px-6 py-5 flex items-start justify-between hover:bg-slate-50 transition-colors text-left"
-                  >
-                    <span className="font-semibold text-slate-900 text-lg pr-4">
-                      {item.question}
-                    </span>
-                    <span
-                      className={`flex-shrink-0 w-6 h-6 flex items-center justify-center transition-transform ${
-                        activeIndex === idx ? "rotate-180" : ""
-                      }`}
-                    >
-                      <svg
-                        className="w-5 h-5 text-amber-500"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                        stroke="currentColor"
-                      >
-                        <path
-                          strokeLinecap="round"
-                          strokeLinejoin="round"
-                          strokeWidth={2}
-                          d="M19 14l-7 7m0 0l-7-7m7 7V3"
-                        />
-                      </svg>
-                    </span>
-                  </button>
-
-                  {activeIndex === idx && (
-                    <div className="border-t border-slate-200 px-6 py-5 bg-slate-50">
-                      <p className="text-slate-700 leading-relaxed">
-                        {item.answer}
-                      </p>
-                    </div>
-                  )}
-                </div>
-              ))}
-            </div>
-
-            {/* CTA Section */}
-            <div
-              className={`mt-16 text-center ${
-                isVisible ? "animate-fade-in-up delay-300" : "opacity-0"
-              }`}
-            >
-              <p className="text-slate-600 mb-6">
-                Still have questions? Get in touch—we respond within 2 hours.
-              </p>
-              <a
-                href="mailto:hello@callconvert.ai"
-                className="inline-flex items-center gap-2 px-6 py-3 bg-amber-500 text-slate-950 font-semibold rounded-lg hover:bg-amber-600 transition-colors"
-              >
-                Contact Our Team
-                <svg
-                  className="w-4 h-4"
-                  fill="none"
-                  viewBox="0 0 24 24"
-                  stroke="currentColor"
-                >
-                  <path
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                    strokeWidth={2}
-                    d="M13 7l5 5m0 0l-5 5m5-5H6"
-                  />
-                </svg>
-              </a>
-            </div>
+      <main style={{ background: "var(--bg-primary)", minHeight: "100vh" }}>
+        <section style={{ padding: "48px 32px", maxWidth: "640px", margin: "0 auto" }}>
+          <div style={{ fontSize: "11px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "8px" }}>
+            Questions
+          </div>
+          <h1 style={{ fontSize: "26px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "8px" }}>
+            Plain answers. No tech talk.
+          </h1>
+          <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.6, marginBottom: "40px" }}>
+            If you&apos;re skeptical, good. Here&apos;s what you actually need to know.
+          </p>
+          <div>
+            {faqs.map(({ q, a }) => (
+              <div key={q} style={{ borderTop: "0.5px solid var(--border-subtle)", padding: "24px 0" }}>
+                <h2 style={{ fontSize: "15px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px" }}>{q}</h2>
+                <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.7 }}>{a}</p>
+              </div>
+            ))}
           </div>
         </section>
       </main>
@@ -297,5 +78,3 @@ function FAQPageContent() {
     </>
   );
 }
-
-export default FAQPageContent;

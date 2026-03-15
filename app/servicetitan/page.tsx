@@ -5,125 +5,55 @@ import Guarantee from "@/components/Guarantee";
 import LeadForm from "@/components/LeadForm";
 import Footer from "@/components/Footer";
 
-/**
- * ServiceTitan Contractor Landing Page
- *
- * Tailored for HVAC contractors already using ServiceTitan for field operations.
- * Key message: "ServiceTitan Knows What Happened. We Make Things Happen."
- */
-
 export const metadata = {
-  title: "Automated Emergency Dispatch for ServiceTitan | DispatchHVAC",
-  description:
-    "Turn ServiceTitan data into live lead capture. We automatically fill emergency calls and cancellations. 30-day free trial.",
-  keywords: [
-    "HVAC contractor",
-    "ServiceTitan integration",
-    "emergency leads",
-    "dispatch automation",
-    "service routing",
-  ],
+  title: "For ServiceTitan Users | Fieldline AI",
+  description: "Fieldline AI works on top of ServiceTitan to capture missed calls, fill cancellations, and bring in after-hours leads. 30-day free trial.",
 };
 
 function ServiceTitanHero() {
   return (
-    <section className="py-24 lg:py-32 hero-gradient relative overflow-hidden">
-      {/* Background Elements */}
-      <div className="absolute inset-0 opacity-30">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0)`,
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </div>
-      <div className="absolute -top-20 -right-20 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
-
-      <div className="container mx-auto px-4 lg:px-8 relative">
-        <div className="max-w-4xl mx-auto text-center">
-          {/* Badge */}
-          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-white/10 border border-white/20 mb-8 animate-fade-in-down">
-            <span className="text-sm font-semibold text-amber-400">
-              For ServiceTitan Contractors
-            </span>
-          </div>
-
-          {/* Main Headline */}
-          <h1 className="text-5xl lg:text-6xl xl:text-7xl font-display font-bold text-white mb-6 leading-tight animate-fade-in-up">
-            ServiceTitan Knows What Happened
-            <br />
-            <span className="gradient-text">We Make Things Happen</span>
+    <>
+      <section style={{ background: "#1A2535", padding: "56px 32px 48px" }}>
+        <div style={{ maxWidth: "580px" }}>
+          <p style={{ fontSize: "12px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "14px" }}>
+            For ServiceTitan users
+          </p>
+          <h1 style={{ fontSize: "clamp(26px, 4vw, 36px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.3, marginBottom: "16px" }}>
+            ServiceTitan keeps your team organized. <span style={{ color: "#E8934A" }}>We keep missed calls from costing you jobs.</span>
           </h1>
-
-          <p className="text-xl lg:text-2xl text-slate-300 mb-8 max-w-3xl mx-auto leading-relaxed animate-fade-in-up delay-100">
-            Deep integration with your ServiceTitan account. While you're handling jobs, we're capturing emergency calls and filling your cancellations automatically. Revenue on autopilot.
+          <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.6, maxWidth: "480px", marginBottom: "28px" }}>
+            ServiceTitan is a great tool. But it doesn&apos;t text back the customer you just missed. It doesn&apos;t fill the slot when a job cancels. We do — automatically, every time, no matter what time it is.
           </p>
-
-          {/* Value Props */}
-          <div className="grid sm:grid-cols-3 gap-6 mb-12 animate-fade-in-up delay-200">
-            {[
-              {
-                icon: "⚡",
-                label: "$150",
-                description: "Per recovered emergency call",
-              },
-              {
-                icon: "🔧",
-                label: "$175",
-                description: "Per cancellation fill",
-              },
-              {
-                icon: "📞",
-                label: "24/7",
-                description: "Automated capture & dispatch",
-              },
-            ].map((item, idx) => (
-              <div
-                key={idx}
-                className="p-6 rounded-xl bg-white/5 border border-white/10 backdrop-blur-sm"
-              >
-                <div className="text-3xl mb-2">{item.icon}</div>
-                <div className="text-2xl font-display font-bold text-white mb-1">
-                  {item.label}
-                </div>
-                <div className="text-sm text-slate-400">{item.description}</div>
-              </div>
-            ))}
-          </div>
-
-          {/* CTA */}
-          <button
-            onClick={() => {
-              const formEl = document.getElementById("lead-form");
-              formEl?.scrollIntoView({ behavior: "smooth" });
-            }}
-            className="btn btn-primary text-lg px-10 py-5 animate-pulse-glow animate-fade-in-up delay-300"
-          >
-            Start Free Trial with ServiceTitan
-            <svg
-              className="w-5 h-5 ml-2"
-              fill="none"
-              viewBox="0 0 24 24"
-              stroke="currentColor"
+          <div style={{ display: "flex", alignItems: "center", gap: "16px", flexWrap: "wrap" }}>
+            <a
+              href="#lead-form"
+              style={{ fontSize: "14px", background: "#E8934A", color: "#fff", border: "none", padding: "11px 24px", borderRadius: "6px", cursor: "pointer", fontWeight: 500, textDecoration: "none", display: "inline-block" }}
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M17 8l4 4m0 0l-4 4m4-4H3"
-              />
-            </svg>
-          </button>
-
-          {/* Trust Signal */}
-          <p className="text-slate-400 text-sm mt-8 animate-fade-in-up delay-400">
-            No credit card. $2,000/month. Perfect for contractors already on ServiceTitan.
-          </p>
+              Try it free for 30 days
+            </a>
+            <a
+              href="#features"
+              style={{ fontSize: "13px", color: "#9AAABB", textDecoration: "underline", cursor: "pointer" }}
+            >
+              See how it works →
+            </a>
+          </div>
         </div>
-      </div>
-    </section>
+      </section>
+
+      <section style={{ background: "#111E2E", padding: "20px 32px", display: "flex", gap: "32px", flexWrap: "wrap" }}>
+        {[
+          { n: "30 sec", l: "We text back missed calls. Most competitors take 47 hours." },
+          { n: "$8,600", l: "Extra money per month for the average contractor we work with." },
+          { n: "Zero", l: "Changes to ServiceTitan. Your team keeps working the same way." },
+        ].map(({ n, l }) => (
+          <div key={n} style={{ flex: 1, minWidth: "140px" }}>
+            <div style={{ fontSize: "22px", fontWeight: 500, color: "#E8934A" }}>{n}</div>
+            <div style={{ fontSize: "12px", color: "#6A7D8E", marginTop: "2px", lineHeight: 1.4 }}>{l}</div>
+          </div>
+        ))}
+      </section>
+    </>
   );
 }
 

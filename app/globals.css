@@ -10,45 +10,73 @@
    CSS VARIABLES — Color Palette & Design Tokens
    ───────────────────────────────────────────────────────────────────────────── */
 :root {
-  /* Core palette */
-  --slate-950: #020617;
-  --slate-900: #0f172a;
-  --slate-800: #1e293b;
-  --slate-700: #334155;
-  --slate-600: #475569;
-  --slate-500: #64748b;
-  --slate-400: #94a3b8;
-  --slate-300: #cbd5e1;
-  --slate-200: #e2e8f0;
-  --slate-100: #f1f5f9;
-  --slate-50: #f8fafc;
+  /* Fieldline AI Design System */
+  --navy-900: #111E2E;
+  --navy-800: #1A2535;
+  --navy-700: #1F3044;
 
-  /* Accent — Warm Amber (action/conversion) */
-  --amber-500: #f59e0b;
-  --amber-400: #fbbf24;
-  --amber-600: #d97706;
+  /* Accent — Warm Orange */
+  --orange-500: #E8934A;
+  --orange-600: #C05C1E;
+  --orange-400: #F0A86A;
 
-  /* Success — Trust green */
+  /* Success */
+  --green-600: #1A7A4A;
   --emerald-500: #10b981;
   --emerald-400: #34d399;
 
-  /* Danger — Alert red */
-  --red-500: #ef4444;
-  --red-400: #f87171;
+  /* Text */
+  --text-primary: #1A2535;
+  --text-secondary: #6A7D8E;
+  --text-muted: #9AAABB;
+  --text-warm: #F5F3EE;
 
-  /* Semantic */
-  --background: var(--slate-50);
-  --foreground: var(--slate-900);
-  --primary: var(--amber-500);
-  --primary-hover: var(--amber-600);
-  --muted: var(--slate-500);
+  /* Backgrounds */
+  --bg-primary: #FAFAF8;
+  --bg-secondary: #FFFFFF;
+  --bg-cream: #F5F2EE;
+
+  /* Borders */
+  --border-warm: #DDD0C0;
+  --border-subtle: #E8DDD0;
+
+  /* Semantic (kept for compatibility) */
+  --background: var(--bg-primary);
+  --foreground: var(--text-primary);
+  --primary: var(--orange-500);
+  --primary-hover: var(--orange-600);
+  --muted: var(--text-secondary);
+
+  /* Fieldline CSS variable names (matching mockup) */
+  --color-background-primary: var(--bg-primary);
+  --color-background-secondary: var(--bg-secondary);
+  --color-border-tertiary: var(--border-subtle);
+  --color-text-primary: var(--text-primary);
+  --color-text-secondary: var(--text-secondary);
+  --font-sans: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+
+  /* Legacy amber (kept for Tailwind compat) */
+  --amber-500: #E8934A;
+  --amber-400: #F0A86A;
+  --amber-600: #C05C1E;
+  --slate-950: #111E2E;
+  --slate-900: #1A2535;
+  --slate-800: #1F3044;
+  --slate-700: #334155;
+  --slate-600: #475569;
+  --slate-500: #6A7D8E;
+  --slate-400: #9AAABB;
+  --slate-300: #cbd5e1;
+  --slate-200: #e2e8f0;
+  --slate-100: #f1f5f9;
+  --slate-50: #FAFAF8;
 
   /* Shadows */
   --shadow-sm: 0 1px 2px 0 rgb(0 0 0 / 0.05);
   --shadow-md: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
   --shadow-lg: 0 10px 15px -3px rgb(0 0 0 / 0.1), 0 4px 6px -4px rgb(0 0 0 / 0.1);
   --shadow-xl: 0 20px 25px -5px rgb(0 0 0 / 0.1), 0 8px 10px -6px rgb(0 0 0 / 0.1);
-  --shadow-glow: 0 0 40px -10px var(--amber-500);
+  --shadow-glow: 0 0 40px -10px var(--orange-500);
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────
@@ -95,19 +123,19 @@ html {
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: var(--font-body);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  font-family: var(--font-sans);
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
 h1, h2, h3, h4, h5, h6 {
-  font-family: var(--font-display);
-  font-weight: 700;
-  line-height: 1.1;
-  letter-spacing: -0.02em;
+  font-family: var(--font-sans);
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: -0.01em;
 }
 
 /* ─────────────────────────────────────────────────────────────────────────────

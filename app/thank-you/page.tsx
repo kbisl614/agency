@@ -2,8 +2,8 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "Trial Set Up! | DispatchHVAC",
-  description: "Your 30-day free trial is set up. We'll contact you within 2 hours to finalize setup and start capturing your emergency leads.",
+  title: "You're All Set | Fieldline AI",
+  description: "We'll be in touch today to get everything connected and start your free trial.",
   robots: {
     index: false,
     follow: false,
@@ -12,120 +12,71 @@ export const metadata: Metadata = {
 
 export default function ThankYouPage() {
   return (
-    <main className="min-h-screen hero-gradient flex items-center justify-center px-4">
-      {/* Background Elements */}
-      <div className="absolute inset-0 opacity-30">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 2px 2px, rgba(255,255,255,0.1) 1px, transparent 0)`,
-            backgroundSize: "50px 50px",
-          }}
-        />
-      </div>
-      <div className="absolute top-20 -right-20 w-80 h-80 bg-amber-500/20 rounded-full blur-3xl" />
-      <div className="absolute -bottom-20 -left-20 w-80 h-80 bg-emerald-500/10 rounded-full blur-3xl" />
+    <main style={{ background: "#1A2535", minHeight: "100vh", display: "flex", alignItems: "center", justifyContent: "center", padding: "40px 32px" }}>
+      <div style={{ maxWidth: "520px", width: "100%" }}>
 
-      <div className="relative max-w-2xl mx-auto text-center">
-        {/* Success Icon */}
-        <div className="w-24 h-24 mx-auto mb-8 rounded-full bg-emerald-500 flex items-center justify-center shadow-lg shadow-emerald-500/30 animate-scale-in">
-          <svg
-            className="w-12 h-12 text-white"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2.5}
-              d="M5 13l4 4L19 7"
-            />
+        {/* Check icon */}
+        <div style={{ width: "48px", height: "48px", borderRadius: "50%", background: "#1A7A4A", display: "flex", alignItems: "center", justifyContent: "center", marginBottom: "24px" }}>
+          <svg width="24" height="24" fill="none" viewBox="0 0 24 24" stroke="#fff" strokeWidth={2.5}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
 
-        {/* Headline */}
-        <h1 className="text-4xl lg:text-5xl xl:text-6xl font-display font-bold text-white mb-6 animate-fade-in-up">
-          Your 30-Day Trial Is Set Up!
+        <h1 style={{ fontSize: "28px", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.2, marginBottom: "12px" }}>
+          Got it. We&apos;ll call you today.
         </h1>
-
-        <p className="text-xl text-slate-300 mb-8 leading-relaxed animate-fade-in-up delay-100">
-          We&apos;ll contact you within 2 hours to finalize your setup. Once we integrate with your CRM, the system starts capturing your emergency leads automatically.
+        <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.6, marginBottom: "32px" }}>
+          Someone from our team will reach out within a few hours. We handle the setup — you don&apos;t need to do a thing.
         </p>
 
-        {/* What to Expect */}
-        <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-8 mb-10 animate-fade-in-up delay-200">
-          <h2 className="text-xl font-display font-bold text-white mb-6">
-            What Happens Next
-          </h2>
-          <div className="space-y-4 text-left">
+        {/* What happens next */}
+        <div style={{ background: "#111E2E", borderRadius: "10px", padding: "24px", marginBottom: "24px" }}>
+          <div style={{ fontSize: "13px", fontWeight: 500, color: "#E8934A", letterSpacing: "1px", textTransform: "uppercase", marginBottom: "16px" }}>
+            Here&apos;s what happens next
+          </div>
+          <div style={{ display: "flex", flexDirection: "column", gap: "18px" }}>
             {[
               {
-                step: "1",
-                title: "Our team contacts you",
-                description:
-                  "We'll call within 2 hours to confirm your CRM details and schedule (Jobber, ServiceTitan, or custom setup).",
+                num: "1",
+                title: "We call you today",
+                body: "Short call — about 20 minutes. We ask a few questions about your jobs and your software.",
               },
               {
-                step: "2",
-                title: "System integration",
-                description:
-                  "We connect to your CRM and configure the dispatch automation. Usually takes 30-60 minutes.",
+                num: "2",
+                title: "We connect everything",
+                body: "We plug into Jobber, ServiceTitan, or HouseCall Pro. You don't touch a thing.",
               },
               {
-                step: "3",
-                title: "Start capturing leads",
-                description:
-                  "The system goes live and begins capturing your emergency calls and filling cancellations 24/7.",
+                num: "3",
+                title: "It starts running",
+                body: "You get a morning report showing every missed call caught, every lead answered, every open slot filled.",
               },
-            ].map((item, idx) => (
-              <div key={idx} className="flex gap-4">
-                <div className="w-8 h-8 rounded-full bg-amber-500 text-slate-950 font-bold flex items-center justify-center flex-shrink-0">
-                  {item.step}
+            ].map(({ num, title, body }) => (
+              <div key={num} style={{ display: "flex", gap: "14px" }}>
+                <div style={{ width: "28px", height: "28px", borderRadius: "50%", background: "#E8934A", color: "#fff", fontSize: "13px", fontWeight: 500, display: "flex", alignItems: "center", justifyContent: "center", flexShrink: 0 }}>
+                  {num}
                 </div>
                 <div>
-                  <h3 className="font-semibold text-white">{item.title}</h3>
-                  <p className="text-slate-400 text-sm">{item.description}</p>
+                  <div style={{ fontSize: "14px", fontWeight: 500, color: "#F5F3EE", marginBottom: "4px" }}>{title}</div>
+                  <div style={{ fontSize: "13px", color: "#6A7D8E", lineHeight: 1.5 }}>{body}</div>
                 </div>
               </div>
             ))}
           </div>
         </div>
 
-        {/* Trial Guarantee */}
-        <div className="mb-10 animate-fade-in-up delay-300">
-          <div className="bg-white/10 backdrop-blur-md border border-white/10 rounded-2xl p-8">
-            <h3 className="text-lg font-display font-bold text-white mb-4">
-              Your Guarantee
-            </h3>
-            <p className="text-slate-300 mb-4">
-              If we don&apos;t capture at least <strong>5 emergency leads</strong> and fill <strong>2 cancellations</strong> in your first 30 days, your first month is free.
-            </p>
-            <p className="text-slate-400 text-sm">
-              That&apos;s a minimum of <strong>$1,200 in recovered revenue</strong> — zero risk on your end.
-            </p>
-          </div>
+        {/* Reminder */}
+        <div style={{ background: "#1F3044", borderRadius: "8px", padding: "16px", marginBottom: "28px" }}>
+          <p style={{ fontSize: "13px", color: "#9AAABB", lineHeight: 1.6 }}>
+            If we don&apos;t get you at least <strong style={{ color: "#F5F3EE" }}>5 new leads</strong> and fill <strong style={{ color: "#F5F3EE" }}>2 open jobs</strong> in the first 30 days, your first month is free. No questions asked.
+          </p>
         </div>
 
-        {/* Back to Home */}
         <Link
           href="/"
-          className="inline-flex items-center gap-2 text-amber-400 hover:text-amber-300 font-semibold transition-colors animate-fade-in-up delay-400"
+          style={{ fontSize: "13px", color: "#E8934A", textDecoration: "none" }}
         >
-          <svg
-            className="w-5 h-5"
-            fill="none"
-            viewBox="0 0 24 24"
-            stroke="currentColor"
-          >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M10 19l-7-7m0 0l7-7m-7 7h18"
-            />
-          </svg>
-          Back to Home
+          ← Back to home
         </Link>
       </div>
     </main>

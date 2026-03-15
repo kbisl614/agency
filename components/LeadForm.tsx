@@ -114,13 +114,13 @@ export default function LeadForm() {
             }`}
           >
             <p className="text-amber-600 font-semibold text-sm uppercase tracking-wider mb-4">
-              Start Your Free Trial
+              Get started
             </p>
             <h2 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-6">
-              30 Days, No Credit Card Required
+              Try it free for 30 days.
             </h2>
             <p className="text-lg text-slate-600">
-              We'll set everything up and show you exactly how the system captures your emergency leads and fills cancellations. If we don't deliver 5 leads + 2 fills in 30 days, your first month is free.
+              No credit card. We&apos;ll call you today. We do the setup — takes about 20 minutes on our end. If we don&apos;t get you 5 leads and fill 2 open jobs, your first month is free.
             </p>
           </div>
 
@@ -353,10 +353,10 @@ export default function LeadForm() {
                           d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
                         />
                       </svg>
-                      Starting Trial...
+                      Sending...
                     </span>
                   ) : (
-                    "Start My Free 30-Day Trial"
+                    "Start my free trial"
                   )}
                 </button>
 
