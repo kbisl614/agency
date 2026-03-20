@@ -29,7 +29,11 @@ function relativeTime(iso: string): string {
   if (diff < 3600) return `${Math.floor(diff / 60)} min ago`;
   if (diff < 86400) return `${Math.floor(diff / 3600)} hr ago`;
   const d = new Date(iso);
-  return `Yesterday at ${d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  const yesterday = new Date(Date.now() - 86400000);
+  if (d.toDateString() === yesterday.toDateString()) {
+    return `Yesterday at ${d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
+  }
+  return `${d.toLocaleDateString([], { month: "short", day: "numeric" })} at ${d.toLocaleTimeString([], { hour: "numeric", minute: "2-digit" })}`;
 }
 
 export default function ActionFeed() {
@@ -77,15 +81,6 @@ export default function ActionFeed() {
     return () => clearInterval(interval);
   }, [fetchTab]);
 
-  // Separate 30-second retry when in error state
-  useEffect(() => {
-    if (!error) return;
-    const retryInterval = setInterval(() => {
-      fetchTab("needs_attention");
-      fetchTab("completed");
-    }, 30000);
-    return () => clearInterval(retryInterval);
-  }, [error, fetchTab]);
 
   function renderRows(items: ActionItem[], defaultCount: number, expanded: boolean, setExpanded: (v: boolean) => void) {
     const visible = expanded ? items : items.slice(0, defaultCount);

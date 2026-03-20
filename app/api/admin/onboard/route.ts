@@ -93,6 +93,7 @@ export async function POST(request: NextRequest) {
   });
 
   if (userError) {
+    await supabaseAdmin.from("clients").delete().eq("contractor_id", userId);
     await supabaseAdmin.auth.admin.deleteUser(userId);
     return NextResponse.json({ error: userError.message }, { status: 500 });
   }

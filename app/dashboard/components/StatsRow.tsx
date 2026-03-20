@@ -65,12 +65,6 @@ export default function StatsRow() {
     return () => clearInterval(interval);
   }, [fetchMetrics]);
 
-  // Separate 30-second retry when in error state
-  useEffect(() => {
-    if (!error) return;
-    const retryInterval = setInterval(fetchMetrics, 30000);
-    return () => clearInterval(retryInterval);
-  }, [error, fetchMetrics]);
 
   useEffect(() => {
     if (!metrics) return;

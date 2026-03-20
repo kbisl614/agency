@@ -50,26 +50,26 @@ export default function ApprovalInbox() {
     return () => clearInterval(interval);
   }, [fetchInbox]);
 
-  // Separate 30-second retry when in error state
-  useEffect(() => {
-    if (!error) return;
-    const retryInterval = setInterval(fetchInbox, 30000);
-    return () => clearInterval(retryInterval);
-  }, [error, fetchInbox]);
 
   async function handleDecision(id: string, decision: "approved" | "skipped") {
+    const item = items.find((i) => i.id === id);
     setFadingOut((prev) => new Set(prev).add(id));
     setTimeout(() => {
-      setItems((prev) => prev.filter((item) => item.id !== id));
+      setItems((prev) => prev.filter((i) => i.id !== id));
       setFadingOut((prev) => { const s = new Set(prev); s.delete(id); return s; });
     }, 400);
     try {
-      await fetch("/api/dashboard/approve", {
+      const res = await fetch("/api/dashboard/approve", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ action_id: id, decision }),
       });
-    } catch { /* fire-and-forget */ }
+      if (!res.ok) throw new Error();
+    } catch {
+      // Re-insert on failure so contractor knows it didn't go through
+      if (item) setItems((prev) => [item, ...prev.filter((i) => i.id !== id)]);
+      setFadingOut((prev) => { const s = new Set(prev); s.delete(id); return s; });
+    }
   }
 
   if (error) {
