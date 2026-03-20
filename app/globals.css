@@ -1,3 +1,37 @@
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans-Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans-Medium.ttf') format('truetype');
+  font-weight: 500;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans-SemiBold.ttf') format('truetype');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/OpenSans-Bold.ttf') format('truetype');
+  font-weight: 700;
+  font-style: normal;
+  font-display: swap;
+}
+
+@keyframes fieldline-pulse {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.35; }
+}
+
 @import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════════════
@@ -368,4 +402,50 @@ h1, h2, h3, h4, h5, h6 {
 
 ::-webkit-scrollbar-thumb:hover {
   background: var(--slate-400);
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   RESPONSIVE UTILITIES
+   ───────────────────────────────────────────────────────────────────────────── */
+
+/* Fluid section padding: tighter on mobile, full on desktop */
+.section-pad {
+  padding: clamp(28px, 5vw, 40px) clamp(16px, 4vw, 32px);
+}
+
+/* Stat bar: single column on very small screens */
+@media (max-width: 480px) {
+  /* pricing grid: single column on phone */
+  .pricing-grid {
+    grid-template-columns: 1fr !important;
+  }
+}
+
+/* LeadForm: section header text sizes */
+.form-heading {
+  font-size: clamp(28px, 5vw, 42px);
+}
+
+/* Guarantee checklist: stack on mobile */
+@media (max-width: 560px) {
+  .guarantee-checks {
+    flex-direction: column;
+  }
+}
+
+/* Nav responsive helpers (used by Header) */
+.nav-desktop {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+@media (max-width: 767px) {
+  .nav-desktop { display: none; }
+}
+
+.nav-mobile-toggle {
+  display: none;
+}
+@media (max-width: 767px) {
+  .nav-mobile-toggle { display: flex; }
 }
