@@ -2,6 +2,7 @@
 
 import NavBar from "./components/NavBar";
 import Greeting from "./components/Greeting";
+import ApprovalInbox from "./components/ApprovalInbox";
 
 export default function DashboardClient({
   businessName,
@@ -15,6 +16,7 @@ export default function DashboardClient({
       <NavBar businessName={businessName} />
       <div style={{ maxWidth: 900, margin: "0 auto", padding: "36px 28px", display: "flex", flexDirection: "column", gap: 30 }}>
         <Greeting firstName={firstName} />
+        <ApprovalInbox />
         {/* sections mount here in subsequent tasks */}
       </div>
     </div>
