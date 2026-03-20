@@ -4,6 +4,7 @@ import NavBar from "./components/NavBar";
 import Greeting from "./components/Greeting";
 import ApprovalInbox from "./components/ApprovalInbox";
 import StatsRow from "./components/StatsRow";
+import ActionFeed from "./components/ActionFeed";
 
 export default function DashboardClient({
   businessName,
@@ -19,6 +20,7 @@ export default function DashboardClient({
         <Greeting firstName={firstName} />
         <ApprovalInbox />
         <StatsRow />
+        <ActionFeed />
         {/* sections mount here in subsequent tasks */}
       </div>
     </div>
