@@ -16,7 +16,11 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
   }
 
-  const { data: callerProfile } = await serverSupabase
+  if (!supabaseAdmin) {
+    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
+  }
+
+  const { data: callerProfile } = await supabaseAdmin
     .from("users")
     .select("role")
     .eq("id", user.id)
@@ -26,25 +30,22 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 
-  if (!supabaseAdmin) {
-    return NextResponse.json({ error: "Server configuration error" }, { status: 500 });
-  }
-
   const body = await request.json();
   const {
     business_name,
+    first_name,
     owner_email,
     owner_phone,
     crm_type,
     review_link,
     jobber_api_key,
-    concierge,
-    closer,
+    responder,
+    quoter,
     dispatcher,
-    strategist,
+    advisor,
   } = body;
 
-  if (!business_name || !owner_email || !owner_phone || !crm_type) {
+  if (!business_name || !first_name || !owner_email || !owner_phone || !crm_type) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -67,12 +68,13 @@ export async function POST(request: NextRequest) {
   const { error: clientError } = await supabaseAdmin.from("clients").insert({
     contractor_id: userId,
     business_name,
+    first_name: first_name || null,
     owner_email,
     owner_phone,
     crm_type,
     review_link: review_link || null,
     jobber_api_key: jobber_api_key || null,
-    agents_active: { concierge, closer, dispatcher, strategist },
+    agents_active: { responder, quoter, dispatcher, advisor },
     is_active: true,
   });
 

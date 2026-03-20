@@ -5,29 +5,31 @@ import { useRouter } from "next/navigation";
 
 interface OnboardFormData {
   business_name: string;
+  first_name: string;
   owner_email: string;
   owner_phone: string;
   crm_type: "jobber" | "servicetitan" | "housecallpro" | "other";
   review_link: string;
   jobber_api_key: string;
   // Agents to activate
-  concierge: boolean;
-  closer: boolean;
+  responder: boolean;
+  quoter: boolean;
   dispatcher: boolean;
-  strategist: boolean;
+  advisor: boolean;
 }
 
 const EMPTY_FORM: OnboardFormData = {
   business_name: "",
+  first_name: "",
   owner_email: "",
   owner_phone: "",
   crm_type: "jobber",
   review_link: "",
   jobber_api_key: "",
-  concierge: true,
-  closer: false,
+  responder: true,
+  quoter: false,
   dispatcher: false,
-  strategist: false,
+  advisor: false,
 };
 
 export default function OnboardPage() {
@@ -160,6 +162,17 @@ export default function OnboardPage() {
             />
           </Field>
 
+          <Field label="Owner First Name" required>
+            <input
+              type="text"
+              value={form.first_name}
+              onChange={(e) => set("first_name", e.target.value)}
+              required
+              style={inputStyle}
+              placeholder="Mike"
+            />
+          </Field>
+
           <div style={{ display: "flex", flexWrap: "wrap", gap: "16px" }}>
             <Field label="Owner Email" required style={{ flex: "1 1 200px" }}>
               <input
@@ -197,7 +210,7 @@ export default function OnboardPage() {
           </Field>
 
           {form.crm_type === "jobber" && (
-            <Field label="Jobber API Key">
+            <Field label="Jobber API Key" optional>
               <input
                 type="text"
                 value={form.jobber_api_key}
@@ -208,7 +221,7 @@ export default function OnboardPage() {
             </Field>
           )}
 
-          <Field label="Google Review Link">
+          <Field label="Google Review Link" optional>
             <input
               type="url"
               value={form.review_link}
@@ -233,35 +246,43 @@ export default function OnboardPage() {
               Agents to Activate
             </p>
             <div style={{ display: "flex", flexWrap: "wrap", gap: "10px" }}>
-              {(["concierge", "closer", "dispatcher", "strategist"] as const).map((agent) => (
-                <label
-                  key={agent}
-                  style={{
-                    display: "flex",
-                    alignItems: "center",
-                    gap: "8px",
-                    padding: "8px 14px",
-                    backgroundColor: form[agent]
-                      ? "rgba(232,147,74,0.15)"
-                      : "rgba(255,255,255,0.04)",
-                    border: `1px solid ${form[agent] ? "rgba(232,147,74,0.5)" : "rgba(255,255,255,0.1)"}`,
-                    borderRadius: "8px",
-                    cursor: "pointer",
-                    color: form[agent] ? "#E8934A" : "#6B7280",
-                    fontSize: "13px",
-                    fontWeight: 600,
-                    userSelect: "none",
-                  }}
-                >
-                  <input
-                    type="checkbox"
-                    checked={form[agent]}
-                    onChange={(e) => set(agent, e.target.checked)}
-                    style={{ display: "none" }}
-                  />
-                  {agent.charAt(0).toUpperCase() + agent.slice(1)}
-                </label>
-              ))}
+              {(["responder", "quoter", "dispatcher", "advisor"] as const).map((agent) => {
+                const AGENT_DISPLAY: Record<string, string> = {
+                  responder: "Responder",
+                  quoter: "Quoter",
+                  dispatcher: "Dispatcher",
+                  advisor: "Advisor",
+                };
+                return (
+                  <label
+                    key={agent}
+                    style={{
+                      display: "flex",
+                      alignItems: "center",
+                      gap: "8px",
+                      padding: "8px 14px",
+                      backgroundColor: form[agent]
+                        ? "rgba(232,147,74,0.15)"
+                        : "rgba(255,255,255,0.04)",
+                      border: `1px solid ${form[agent] ? "rgba(232,147,74,0.5)" : "rgba(255,255,255,0.1)"}`,
+                      borderRadius: "8px",
+                      cursor: "pointer",
+                      color: form[agent] ? "#E8934A" : "#6B7280",
+                      fontSize: "13px",
+                      fontWeight: 600,
+                      userSelect: "none",
+                    }}
+                  >
+                    <input
+                      type="checkbox"
+                      checked={form[agent]}
+                      onChange={(e) => set(agent, e.target.checked)}
+                      style={{ display: "none" }}
+                    />
+                    {AGENT_DISPLAY[agent]}
+                  </label>
+                );
+              })}
             </div>
           </div>
 
@@ -291,11 +312,13 @@ export default function OnboardPage() {
 function Field({
   label,
   required,
+  optional,
   children,
   style,
 }: {
   label: string;
   required?: boolean;
+  optional?: boolean;
   children: React.ReactNode;
   style?: React.CSSProperties;
 }) {
@@ -312,6 +335,7 @@ function Field({
       >
         {label}
         {required && <span style={{ color: "#E8934A", marginLeft: "3px" }}>*</span>}
+        {optional && <span style={{ color: "#6B7280", fontWeight: 400, marginLeft: "6px" }}>(optional)</span>}
       </label>
       {children}
     </div>
