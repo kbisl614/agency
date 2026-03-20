@@ -1,3 +1,5 @@
+@import "tailwindcss";
+
 @font-face {
   font-family: 'Open Sans';
   src: url('/fonts/OpenSans-Regular.ttf') format('truetype');
@@ -31,8 +33,6 @@
   0%, 100% { opacity: 1; }
   50% { opacity: 0.35; }
 }
-
-@import "tailwindcss";
 
 /* ═══════════════════════════════════════════════════════════════════════════
    AI AGENCY LANDING — DESIGN SYSTEM
