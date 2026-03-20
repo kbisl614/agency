@@ -82,7 +82,7 @@ export default function StatsRow() {
   const animatedRevenue = useCountUp(metrics?.revenue_mtd ?? 0);
 
   if (error) {
-    return <div style={{ color: "#6a7d8e", fontSize: 13 }}>Couldn't load stats — will retry shortly</div>;
+    return <div style={{ color: "#6a7d8e", fontSize: 13 }}>Couldn&apos;t load stats — will retry shortly</div>;
   }
 
   if (!metrics) {

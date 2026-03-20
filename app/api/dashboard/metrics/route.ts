@@ -23,8 +23,7 @@ export async function GET() {
   todayStart.setHours(0, 0, 0, 0);
 
   // Load in parallel
-  const [{ data: _client }, { data: actions }, { data: todayActions }] = await Promise.all([
-    supabaseAdmin.from("clients").select("agents_active").eq("contractor_id", contractor_id).single(),
+  const [{ data: actions }, { data: todayActions }] = await Promise.all([
     supabaseAdmin
       .from("actions")
       .select("revenue_impact, response_time_ms, status, created_at")

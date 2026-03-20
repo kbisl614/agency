@@ -75,7 +75,7 @@ export default function ApprovalInbox() {
   if (error) {
     return (
       <div style={{ color: "#6a7d8e", fontSize: 13 }}>
-        Couldn't load approvals — will retry shortly
+        Couldn&apos;t load approvals — will retry shortly
       </div>
     );
   }
@@ -102,7 +102,7 @@ export default function ApprovalInbox() {
           <div style={{ display: "flex", alignItems: "center", gap: 8 }}>
             <span style={{ color: "#4ade80", fontSize: 14 }}>✓</span>
             <div>
-              <div style={{ fontSize: 12, fontWeight: 500, color: "#e8ddd0" }}>You're all caught up.</div>
+              <div style={{ fontSize: 12, fontWeight: 500, color: "#e8ddd0" }}>You&apos;re all caught up.</div>
               <div style={{ fontSize: 12, color: "#6a7d8e", marginTop: 2 }}>Nothing needs your attention right now.</div>
             </div>
           </div>

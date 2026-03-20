@@ -159,7 +159,7 @@ export default function ActionFeed() {
   }
 
   if (error) {
-    return <div style={{ color: "#6a7d8e", fontSize: 13 }}>Couldn't load this section — will retry shortly</div>;
+    return <div style={{ color: "#6a7d8e", fontSize: 13 }}>Couldn&apos;t load this section — will retry shortly</div>;
   }
 
   return (
