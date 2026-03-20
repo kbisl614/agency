@@ -25,12 +25,12 @@ export async function middleware(request: NextRequest) {
     }
   );
 
-  const { data: { user } } = await supabase.auth.getUser();
+  const { data: { user }, error: authError } = await supabase.auth.getUser();
 
   const { pathname } = request.nextUrl;
   const isProtected = pathname.startsWith("/dashboard") || pathname.startsWith("/admin");
 
-  if (isProtected && !user) {
+  if (isProtected && (!user || authError)) {
     const loginUrl = request.nextUrl.clone();
     loginUrl.pathname = "/login";
     return NextResponse.redirect(loginUrl);
