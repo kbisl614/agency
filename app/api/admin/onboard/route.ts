@@ -93,8 +93,15 @@ export async function POST(request: NextRequest) {
   });
 
   if (userError) {
-    await supabaseAdmin.from("clients").delete().eq("contractor_id", userId);
+    const { error: clientDeleteError } = await supabaseAdmin
+      .from("clients").delete().eq("contractor_id", userId);
     await supabaseAdmin.auth.admin.deleteUser(userId);
+    if (clientDeleteError) {
+      return NextResponse.json(
+        { error: "Onboard failed and rollback incomplete — clients row may be orphaned. Contact support." },
+        { status: 500 }
+      );
+    }
     return NextResponse.json({ error: userError.message }, { status: 500 });
   }
 
