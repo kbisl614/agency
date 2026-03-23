@@ -19,17 +19,14 @@ export default function Header() {
 
         {/* Desktop */}
         <div className="hidden md:flex" style={{ display: "flex", gap: "20px", alignItems: "center" }}>
-          <button onClick={() => scrollTo("#features")} style={{ fontSize: "13px", color: "var(--text-secondary)", background: "none", border: "none", cursor: "pointer" }}>
+          <button onClick={() => scrollTo("#how-it-works")} style={{ fontSize: "13px", color: "var(--text-secondary)", background: "none", border: "none", cursor: "pointer" }}>
             How it works
           </button>
-          <button onClick={() => scrollTo("#pricing")} style={{ fontSize: "13px", color: "var(--text-secondary)", background: "none", border: "none", cursor: "pointer" }}>
-            Pricing
-          </button>
           <button
-            onClick={() => scrollTo("#lead-form")}
+            onClick={() => scrollTo("#book-call")}
             style={{ fontSize: "13px", background: "#C05C1E", color: "#fff", border: "none", padding: "7px 16px", borderRadius: "6px", cursor: "pointer" }}
           >
-            Book a demo
+            Book a call
           </button>
         </div>
 
@@ -52,17 +49,14 @@ export default function Header() {
       {/* Mobile menu */}
       {isMobileMenuOpen && (
         <div style={{ padding: "12px 32px 20px", borderTop: "0.5px solid var(--border-subtle)", display: "flex", flexDirection: "column", gap: "16px" }}>
-          <button onClick={() => scrollTo("#features")} style={{ fontSize: "13px", color: "var(--text-secondary)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
+          <button onClick={() => scrollTo("#how-it-works")} style={{ fontSize: "13px", color: "var(--text-secondary)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
             How it works
           </button>
-          <button onClick={() => scrollTo("#pricing")} style={{ fontSize: "13px", color: "var(--text-secondary)", background: "none", border: "none", cursor: "pointer", textAlign: "left" }}>
-            Pricing
-          </button>
           <button
-            onClick={() => scrollTo("#lead-form")}
+            onClick={() => scrollTo("#book-call")}
             style={{ fontSize: "13px", background: "#C05C1E", color: "#fff", border: "none", padding: "9px 16px", borderRadius: "6px", cursor: "pointer", textAlign: "left" }}
           >
-            Book a demo
+            Book a call
           </button>
         </div>
       )}
