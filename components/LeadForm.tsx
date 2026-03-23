@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -12,27 +12,9 @@ import {
 
 export default function LeadForm() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   const {
     register,
@@ -100,36 +82,24 @@ export default function LeadForm() {
     <section
       id="lead-form"
       ref={sectionRef}
-      className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden"
+      style={{ background: "var(--bg-primary)", padding: "72px clamp(16px, 4vw, 32px)" }}
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 section-pattern opacity-30" />
-
-      <div className="container mx-auto px-4 lg:px-8 relative">
-        <div className="max-w-2xl mx-auto">
+      <div style={{ maxWidth: "600px", margin: "0 auto" }}>
           {/* Section Header */}
-          <div
-            className={`text-center mb-12 ${
-              isVisible ? "animate-fade-in-up" : "opacity-0"
-            }`}
-          >
-            <p className="text-amber-600 font-semibold text-sm uppercase tracking-wider mb-4">
+          <div style={{ textAlign: "center", marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 500, color: "var(--orange-500)", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "12px" }}>
               Get started
             </p>
-            <h2 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-6">
+            <h2 style={{ fontSize: "clamp(26px, 4vw, 36px)", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px", lineHeight: 1.2 }}>
               Try it free for 30 days.
             </h2>
-            <p className="text-lg text-slate-600">
+            <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.6 }}>
               No credit card. We&apos;ll call you today. We do the setup — takes about 20 minutes on our end. If we don&apos;t get you 5 leads and fill 2 open jobs, your first month is free.
             </p>
           </div>
 
           {/* Form Card */}
-          <div
-            className={`bg-white rounded-2xl p-8 lg:p-10 border border-slate-200 shadow-lg ${
-              isVisible ? "animate-fade-in-up delay-200" : "opacity-0"
-            }`}
-          >
+          <div style={{ background: "var(--bg-secondary)", borderRadius: "10px", padding: "clamp(20px, 4vw, 32px)", border: "0.5px solid var(--border-subtle)" }}>
             {/* Success State */}
             {submitSuccess ? (
               <div className="text-center py-12">
@@ -152,7 +122,7 @@ export default function LeadForm() {
                   Your Trial Is Set Up!
                 </h3>
                 <p className="text-slate-600">
-                  We'll contact you within 2 hours to finalize setup. Redirecting...
+                  We&apos;ll contact you within 2 hours to finalize setup. Redirecting...
                 </p>
               </div>
             ) : (
@@ -399,7 +369,6 @@ export default function LeadForm() {
               </form>
             )}
           </div>
-        </div>
       </div>
     </section>
   );
