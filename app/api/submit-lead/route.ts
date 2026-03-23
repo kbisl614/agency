@@ -44,7 +44,8 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Remove the agreed_to_contact field before validation (it's only for client-side)
-    const { agreed_to_contact: _, ...leadData } = body;
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { agreed_to_contact, ...leadData } = body;
 
     // Validate with Zod schema
     const validatedData = leadInsertSchema.parse(leadData);
