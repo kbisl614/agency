@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
+> This document contains outdated information. See current reference below.
+> **Current reference:** `agency-context/agency_AI_MASTER.md`
+> Preserved for session history only.
+
+---
+
 # Phase 1 Implementation Plan — Tier 1 Workflows (Detailed & Thorough)
 
 > **For agentic workers:** REQUIRED: Use superpowers:subagent-driven-development to implement this plan. Steps use checkbox (`- [ ]`) syntax for tracking.

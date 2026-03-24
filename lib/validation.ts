@@ -1,14 +1,13 @@
 import { z } from "zod";
 
 /**
- * Industry options for the lead form dropdown
- * Currently HVAC-only (Phase 1)
- * Phase 2 will expand to other HVAC-adjacent trades
+ * Scheduling software options for the discovery call intake form
  */
 export const INDUSTRIES = [
-  "HVAC Contractor",
-  "HVAC with Plumbing",
-  "HVAC with Electrical",
+  "Jobber",
+  "ServiceTitan",
+  "HouseCall Pro",
+  "Other / not sure",
 ] as const;
 
 export type Industry = (typeof INDUSTRIES)[number];

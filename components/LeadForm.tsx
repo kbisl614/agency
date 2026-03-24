@@ -1,6 +1,6 @@
 "use client";
 
-import { useState, useEffect, useRef } from "react";
+import { useState, useRef } from "react";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import {
@@ -12,27 +12,9 @@ import {
 
 export default function LeadForm() {
   const sectionRef = useRef<HTMLElement>(null);
-  const [isVisible, setIsVisible] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [submitError, setSubmitError] = useState<string | null>(null);
   const [submitSuccess, setSubmitSuccess] = useState(false);
-
-  useEffect(() => {
-    const observer = new IntersectionObserver(
-      ([entry]) => {
-        if (entry.isIntersecting) {
-          setIsVisible(true);
-        }
-      },
-      { threshold: 0.1 }
-    );
-
-    if (sectionRef.current) {
-      observer.observe(sectionRef.current);
-    }
-
-    return () => observer.disconnect();
-  }, []);
 
   const {
     register,
@@ -50,7 +32,7 @@ export default function LeadForm() {
       phone: "",
       industry: undefined,
       monthly_calls_missed: undefined,
-      agreed_to_contact: false,
+      agreed_to_contact: true,
     },
   });
 
@@ -98,69 +80,47 @@ export default function LeadForm() {
 
   return (
     <section
-      id="lead-form"
+      id="book-call"
       ref={sectionRef}
-      className="py-24 lg:py-32 bg-slate-50 relative overflow-hidden"
+      style={{ background: "var(--bg-primary)", padding: "clamp(48px, 8vw, 72px) clamp(20px, 5vw, 72px)" }}
     >
-      {/* Background Pattern */}
-      <div className="absolute inset-0 section-pattern opacity-30" />
-
-      <div className="container mx-auto px-4 lg:px-8 relative">
-        <div className="max-w-2xl mx-auto">
+      <div style={{ maxWidth: "560px", margin: "0 auto" }}>
           {/* Section Header */}
-          <div
-            className={`text-center mb-12 ${
-              isVisible ? "animate-fade-in-up" : "opacity-0"
-            }`}
-          >
-            <p className="text-amber-600 font-semibold text-sm uppercase tracking-wider mb-4">
-              Get started
+          <div style={{ marginBottom: "32px" }}>
+            <p style={{ fontSize: "11px", fontWeight: 500, color: "var(--orange-500)", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "12px" }}>
+              Book a discovery call
             </p>
-            <h2 className="text-4xl lg:text-5xl font-display font-bold text-slate-900 mb-6">
-              Try it free for 30 days.
+            <h2 style={{ fontSize: "clamp(22px, 3.5vw, 30px)", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px", lineHeight: 1.25 }}>
+              Let&apos;s talk. 30 minutes.
             </h2>
-            <p className="text-lg text-slate-600">
-              No credit card. We&apos;ll call you today. We do the setup — takes about 20 minutes on our end. If we don&apos;t get you 5 leads and fill 2 open jobs, your first month is free.
+            <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+              We&apos;ll map your workflow, look at where calls and jobs are slipping, and tell you honestly whether we&apos;re the right fit. No pitch. No obligation.
             </p>
           </div>
 
           {/* Form Card */}
-          <div
-            className={`bg-white rounded-2xl p-8 lg:p-10 border border-slate-200 shadow-lg ${
-              isVisible ? "animate-fade-in-up delay-200" : "opacity-0"
-            }`}
-          >
+          <div style={{ background: "var(--bg-secondary)", borderRadius: "10px", padding: "clamp(20px, 4vw, 32px)", border: "0.5px solid var(--border-subtle)" }}>
             {/* Success State */}
             {submitSuccess ? (
-              <div className="text-center py-12">
-                <div className="w-20 h-20 mx-auto mb-6 rounded-full bg-emerald-100 flex items-center justify-center">
-                  <svg
-                    className="w-10 h-10 text-emerald-500"
-                    fill="none"
-                    viewBox="0 0 24 24"
-                    stroke="currentColor"
-                  >
-                    <path
-                      strokeLinecap="round"
-                      strokeLinejoin="round"
-                      strokeWidth={2}
-                      d="M5 13l4 4L19 7"
-                    />
+              <div style={{ textAlign: "center", padding: "48px 24px" }}>
+                <div style={{ width: "64px", height: "64px", borderRadius: "50%", background: "#F0FDF4", border: "1px solid #BBF7D0", display: "flex", alignItems: "center", justifyContent: "center", margin: "0 auto 20px" }}>
+                  <svg width="28" height="28" fill="none" viewBox="0 0 24 24" stroke="#1A7A4A" strokeWidth={2}>
+                    <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
                   </svg>
                 </div>
-                <h3 className="text-2xl font-display font-bold text-slate-900 mb-2">
-                  Your Trial Is Set Up!
+                <h3 style={{ fontSize: "20px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "8px" }}>
+                  We&apos;ll be in touch today.
                 </h3>
-                <p className="text-slate-600">
-                  We'll contact you within 2 hours to finalize setup. Redirecting...
+                <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.6 }}>
+                  Expect a call or text within a few hours to confirm your time. Redirecting...
                 </p>
               </div>
             ) : (
               <form onSubmit={handleSubmit(onSubmit)} className="space-y-6">
                 {/* Business Name */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-900 mb-2">
-                    Business Name <span className="text-red-500">*</span>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "6px" }}>
+                    Business name <span style={{ color: "#E85A4A" }}>*</span>
                   </label>
                   <input
                     type="text"
@@ -179,8 +139,8 @@ export default function LeadForm() {
 
                 {/* Owner Name */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-900 mb-2">
-                    Your Name <span className="text-red-500">*</span>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "6px" }}>
+                    Your name <span style={{ color: "#E85A4A" }}>*</span>
                   </label>
                   <input
                     type="text"
@@ -201,8 +161,8 @@ export default function LeadForm() {
                 <div className="grid sm:grid-cols-2 gap-6">
                   {/* Email */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-900 mb-2">
-                      Email <span className="text-red-500">*</span>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "6px" }}>
+                      Email <span style={{ color: "#E85A4A" }}>*</span>
                     </label>
                     <input
                       type="email"
@@ -221,8 +181,8 @@ export default function LeadForm() {
 
                   {/* Phone */}
                   <div>
-                    <label className="block text-sm font-semibold text-slate-900 mb-2">
-                      Phone <span className="text-red-500">*</span>
+                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "6px" }}>
+                      Phone <span style={{ color: "#E85A4A" }}>*</span>
                     </label>
                     <input
                       type="tel"
@@ -241,10 +201,10 @@ export default function LeadForm() {
                   </div>
                 </div>
 
-                {/* Industry */}
+                {/* Software */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-900 mb-2">
-                    Industry <span className="text-red-500">*</span>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "6px" }}>
+                    What scheduling software do you use? <span style={{ color: "#E85A4A" }}>*</span>
                   </label>
                   <select
                     className={`input-field ${
@@ -252,7 +212,7 @@ export default function LeadForm() {
                     }`}
                     {...register("industry")}
                   >
-                    <option value="">Select your industry</option>
+                    <option value="">Select your software</option>
                     {INDUSTRIES.map((industry) => (
                       <option key={industry} value={industry}>
                         {industry}
@@ -266,16 +226,16 @@ export default function LeadForm() {
                   )}
                 </div>
 
-                {/* Monthly Calls Missed (Optional) */}
+                {/* Tech count (Optional) */}
                 <div>
-                  <label className="block text-sm font-semibold text-slate-900 mb-2">
-                    Approximate monthly calls you miss{" "}
-                    <span className="text-slate-400">(optional)</span>
+                  <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "6px" }}>
+                    How many techs do you run?{" "}
+                    <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span>
                   </label>
                   <input
                     type="number"
-                    placeholder="e.g., 20"
-                    min="0"
+                    placeholder="e.g., 8"
+                    min="1"
                     className="input-field"
                     {...register("monthly_calls_missed", {
                       setValueAs: (v) => (v === "" ? undefined : parseInt(v)),
@@ -283,26 +243,7 @@ export default function LeadForm() {
                   />
                 </div>
 
-                {/* Agreement Checkbox */}
-                <div>
-                  <label className="flex items-start gap-3 cursor-pointer">
-                    <input
-                      type="checkbox"
-                      className="mt-1 w-5 h-5 rounded border-slate-300 text-amber-500 focus:ring-amber-500"
-                      {...register("agreed_to_contact")}
-                    />
-                    <span className="text-sm text-slate-600">
-                      I agree to be contacted via email and phone about my demo
-                      booking. I can unsubscribe anytime.{" "}
-                      <span className="text-red-500">*</span>
-                    </span>
-                  </label>
-                  {errors.agreed_to_contact && (
-                    <p className="text-red-500 text-sm mt-1">
-                      {errors.agreed_to_contact.message}
-                    </p>
-                  )}
-                </div>
+                {/* Hidden agreed_to_contact — defaulted to true, not shown */}
 
                 {/* Error Message */}
                 {submitError && (
@@ -330,76 +271,29 @@ export default function LeadForm() {
                 <button
                   type="submit"
                   disabled={isSubmitting}
-                  className="w-full py-4 bg-amber-500 text-slate-950 font-display font-bold rounded-lg hover:bg-amber-600 transition-all disabled:bg-slate-300 disabled:cursor-not-allowed shadow-lg shadow-amber-500/20"
+                  style={{
+                    width: "100%",
+                    padding: "14px",
+                    background: isSubmitting ? "#9AAABB" : "#E8934A",
+                    color: "#fff",
+                    border: "none",
+                    borderRadius: "6px",
+                    cursor: isSubmitting ? "not-allowed" : "pointer",
+                    fontSize: "14px",
+                    fontWeight: 600,
+                    transition: "background 0.15s",
+                  }}
                 >
-                  {isSubmitting ? (
-                    <span className="flex items-center justify-center gap-2">
-                      <svg
-                        className="animate-spin w-5 h-5"
-                        fill="none"
-                        viewBox="0 0 24 24"
-                      >
-                        <circle
-                          className="opacity-25"
-                          cx="12"
-                          cy="12"
-                          r="10"
-                          stroke="currentColor"
-                          strokeWidth="4"
-                        />
-                        <path
-                          className="opacity-75"
-                          fill="currentColor"
-                          d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"
-                        />
-                      </svg>
-                      Sending...
-                    </span>
-                  ) : (
-                    "Start my free trial"
-                  )}
+                  {isSubmitting ? "Sending..." : "Request a discovery call"}
                 </button>
 
                 {/* Trust Note */}
-                <p className="text-center text-slate-500 text-sm">
-                  <span className="inline-flex items-center gap-1">
-                    <svg
-                      className="w-4 h-4 text-emerald-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    No credit card required
-                  </span>
-                  <span className="mx-2">•</span>
-                  <span className="inline-flex items-center gap-1">
-                    <svg
-                      className="w-4 h-4 text-emerald-500"
-                      fill="none"
-                      viewBox="0 0 24 24"
-                      stroke="currentColor"
-                    >
-                      <path
-                        strokeLinecap="round"
-                        strokeLinejoin="round"
-                        strokeWidth={2}
-                        d="M5 13l4 4L19 7"
-                      />
-                    </svg>
-                    Takes less than 2 minutes
-                  </span>
+                <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.5 }}>
+                  We&apos;ll reach out within a few hours to confirm your time. No contracts, no pressure.
                 </p>
               </form>
             )}
           </div>
-        </div>
       </div>
     </section>
   );

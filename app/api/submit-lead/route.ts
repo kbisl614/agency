@@ -44,6 +44,7 @@ export async function POST(request: NextRequest) {
     const body = await request.json();
 
     // Remove the agreed_to_contact field before validation (it's only for client-side)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { agreed_to_contact, ...leadData } = body;
 
     // Validate with Zod schema
@@ -51,7 +52,6 @@ export async function POST(request: NextRequest) {
 
     // Check if Supabase admin client is available
     if (!supabaseAdmin) {
-      console.error("Supabase admin client not configured");
       return NextResponse.json(
         { error: "Server configuration error" },
         { status: 500 }
@@ -74,8 +74,6 @@ export async function POST(request: NextRequest) {
       .single();
 
     if (insertError) {
-      console.error("Supabase insert error:", insertError);
-
       // Handle duplicate email gracefully
       if (insertError.code === "23505") {
         return NextResponse.json(
@@ -90,11 +88,27 @@ export async function POST(request: NextRequest) {
       );
     }
 
-    // Log successful submission (in production, send to analytics/email)
-    console.log(`New lead submitted: ${validatedData.email} from ${ip}`);
-
-    // TODO: Send confirmation email to lead
-    // TODO: Send notification email to admin
+    // Notify via n8n webhook (fire-and-forget — don't block the response)
+    const n8nBase = process.env.N8N_WEBHOOK_BASE_URL;
+    if (n8nBase) {
+      const controller = new AbortController();
+      setTimeout(() => controller.abort(), 2000);
+      fetch(`${n8nBase.replace(/\/$/, "")}/webhook/new-lead`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          lead_id: data?.id,
+          business_name: validatedData.business_name,
+          owner_name: validatedData.owner_name,
+          email: validatedData.email,
+          phone: validatedData.phone,
+          industry: validatedData.industry,
+          monthly_calls_missed: validatedData.monthly_calls_missed ?? null,
+          submitted_at: new Date().toISOString(),
+        }),
+        signal: controller.signal,
+      }).catch(() => {}); // fire-and-forget — timeout at 2s
+    }
 
     return NextResponse.json(
       {
@@ -128,9 +142,6 @@ export async function POST(request: NextRequest) {
         { status: 400 }
       );
     }
-
-    // Log unexpected errors
-    console.error("Unexpected error in submit-lead:", error);
 
     return NextResponse.json(
       { error: "An unexpected error occurred" },

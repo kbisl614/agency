@@ -1,3 +1,9 @@
+> **Note:** Feature tier mapping below predates the current 4-agent model.
+> Current agent structure: Concierge → Closer → Dispatcher → Strategist.
+> See `agency-context/agency_AI_MASTER.md` for current tier definitions.
+
+---
+
 # Market Research Integration — What Changed
 
 **Date:** 2026-03-14

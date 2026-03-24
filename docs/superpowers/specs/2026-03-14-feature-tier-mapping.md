@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
+> This document contains outdated information. See current reference below.
+> **Current reference:** `agency-context/agency_AI_MASTER.md`
+> Preserved for session history only.
+
+---
+
 ---
 name: Feature Prioritization & Implementation Mapping
 description: Maps market research (contractor-validated pain) to Layer 1 agents by tier. Defines what builds in Phase 1 (Tier 1 only), Phase 2 (Tier 2), and Phase 3+ (Tier 3). Source of truth for feature prioritization.

@@ -15,59 +15,35 @@ const dmSans = DM_Sans({
 });
 
 export const metadata: Metadata = {
-  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || "https://dispachhvac.ai"),
-  title: "HVAC Dispatch Automation | Capture Emergency Calls at 2 AM",
+  title: "Fieldline AI — AI Operations for HVAC Contractors",
   description:
-    "AI-powered autonomous revenue system for HVAC contractors. Capture 100% of leads in <30 seconds. Fill cancellations instantly. Handle 80% of dispatcher work. Works on Jobber & ServiceTitan. 30-day free trial.",
+    "We map where your HVAC business is losing money, build the AI that fixes it, and run it. Discovery call first. Custom-built for your operation.",
+  authors: [{ name: "Fieldline AI" }],
   keywords: [
+    "HVAC AI operations",
+    "HVAC contractor automation",
+    "AI for HVAC",
+    "Jobber AI",
+    "ServiceTitan AI",
+    "HVAC lead recovery",
     "HVAC dispatch automation",
-    "emergency lead capture",
-    "HVAC AI",
-    "contractor dispatch software",
-    "Jobber integration",
-    "ServiceTitan integration",
-    "HVAC cancellation recovery",
-    "HVAC emergency calls",
   ],
-  authors: [{ name: "Dispatch HVAC" }],
-  creator: "Dispatch HVAC",
+  creator: "Fieldline AI",
+  robots: "index, follow",
   openGraph: {
-    type: "website",
-    locale: "en_US",
-    url: "https://dispachhvac.ai",
-    siteName: "Dispatch HVAC",
-    title: "HVAC Dispatch Automation | Capture Every Emergency Call",
+    title: "Fieldline AI — AI Operations for HVAC Contractors",
     description:
-      "Your HVAC business running at 2 AM without you. Capture emergency leads in <30 seconds. Fill cancellations while you sleep. No dispatcher needed.",
-    images: [
-      {
-        url: "/og-image.jpg",
-        width: 1200,
-        height: 630,
-        alt: "HVAC Emergency Lead Capture & Dispatch Automation",
-      },
-    ],
+      "Custom AI built for your HVAC operation. We map your bottlenecks, build the system, and run it. Discovery call first.",
+    url: "https://fieldlineai.com",
+    siteName: "Fieldline AI",
+    locale: "en_US",
+    type: "website",
   },
   twitter: {
     card: "summary_large_image",
-    title: "HVAC Dispatch Automation | Capture Emergency Calls at 2 AM",
+    title: "Fieldline AI — AI Operations for HVAC Contractors",
     description:
-      "AI handles your emergency leads, cancellations, and dispatch 24/7. Works on Jobber & ServiceTitan.",
-    images: ["/og-image.jpg"],
-  },
-  robots: {
-    index: true,
-    follow: true,
-    googleBot: {
-      index: true,
-      follow: true,
-      "max-video-preview": -1,
-      "max-image-preview": "large",
-      "max-snippet": -1,
-    },
-  },
-  verification: {
-    google: "your-google-verification-code",
+      "Custom AI built for your HVAC operation. We map your bottlenecks, build the system, and run it.",
   },
 };
 

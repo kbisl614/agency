@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
+> This document contains outdated information. See current reference below.
+> **Current reference:** `agency-context/agency_AI_MASTER.md`
+> Preserved for session history only.
+
+---
+
 ---
 name: Phase 1 Implementation Plan — Tier 1 Only (Hero 1-2 Punch)
 description: Build 3 Tier 1 workflows (After-hours capture + Missed call recovery + Audit trail) + FastAPI backend + basic Mission Control dashboard. Market research validated. First client deliverable.

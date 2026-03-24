@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
+> This document contains outdated information. See current reference below.
+> **Current reference:** `agency-context/agency_AI_MASTER.md`
+> Preserved for session history only.
+
+---
+
 # HVAC SaaS: Gaps & New Implementations
 **Last Updated:** March 2026  
 **Source:** CRM Pain Point Research + Product Cross-Reference  
