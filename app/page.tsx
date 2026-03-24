@@ -71,7 +71,7 @@ export default function Home() {
               For HVAC contractors with 5–20 techs
             </p>
             <h1 style={{ fontSize: "clamp(28px, 5vw, 46px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.15, marginBottom: "24px" }}>
-              AI Operations for HVAC. <span style={{ color: "#E8934A" }}>Set it and forget it.</span>
+              <span style={{ color: "#E8934A" }}>AI Operations for HVAC.</span> Set it and forget it.
             </h1>
             <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.75, maxWidth: "520px", marginBottom: "40px" }}>
               We map where your business is leaking money, build the AI that plugs the holes, and run it.
@@ -98,7 +98,7 @@ export default function Home() {
         </section>
 
         {/* ── STATS ROW ── */}
-        <section style={{ background: "#111E2E", padding: "36px clamp(20px, 5vw, 72px)", display: "flex", gap: "48px", flexWrap: "wrap", alignItems: "flex-start" }}>
+        <section style={{ background: "#111E2E", padding: "clamp(48px, 6vw, 64px) clamp(20px, 5vw, 72px)", display: "flex", gap: "48px", flexWrap: "wrap", alignItems: "flex-start" }}>
           <div style={{ flex: "1 1 160px" }}>
             <div style={{ fontSize: "22px", fontWeight: 500, color: "#E8934A" }}>&lt; 60 sec</div>
             <div style={{ fontSize: "13px", color: "#6A7D8E", marginTop: "6px", lineHeight: 1.6 }}>
@@ -187,7 +187,7 @@ export default function Home() {
             manage on your behalf, and grow alongside you.
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, minmax(0, 1fr))", gap: "20px" }}>
             {[
               {
                 title: "Built specifically for your operation",
@@ -215,7 +215,7 @@ export default function Home() {
               },
               {
                 title: "You see what's happening every morning",
-                body: "A plain-English summary hits your phone by 7am — what ran overnight, what was recovered, what's on deck. No dashboards to check. No reports to pull. Just a clear picture of what your AI did while you slept.",
+                body: "A plain-English summary hits your phone by 7am — what ran overnight, what was recovered, what's on deck. No reports to pull. Just a clear picture of what your AI did while you slept.",
               },
               {
                 title: "High-stakes actions always need your approval",
@@ -225,10 +225,10 @@ export default function Home() {
               <div
                 key={item.title}
                 style={{
-                  background: "rgba(255,255,255,0.03)",
-                  border: "0.5px solid rgba(255,255,255,0.08)",
+                  background: "rgba(255,255,255,0.04)",
+                  border: "1px solid rgba(255,255,255,0.16)",
                   borderRadius: "10px",
-                  padding: "28px",
+                  padding: "32px",
                 }}
               >
                 <div style={{ display: "flex", alignItems: "flex-start", gap: "12px", marginBottom: "10px" }}>
