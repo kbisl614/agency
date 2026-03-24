@@ -68,7 +68,7 @@ export default function LoginPage() {
             <span style={{ color: "#FAFAF8", fontWeight: 700, fontSize: "20px" }}>F</span>
           </div>
           <h1 style={{ color: "#1A2535", fontSize: "22px", fontWeight: 700, margin: 0 }}>
-            Fieldline AI
+            Workfloor
           </h1>
           <p style={{ color: "#6B7280", fontSize: "14px", marginTop: "6px" }}>
             Sign in to your dashboard

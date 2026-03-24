@@ -39,7 +39,7 @@ export default async function AdminPage() {
           height: "60px",
         }}
       >
-        <span style={{ color: "#FAFAF8", fontWeight: 700, fontSize: "16px" }}>Fieldline AI — Admin</span>
+        <span style={{ color: "#FAFAF8", fontWeight: 700, fontSize: "16px" }}>Workfloor — Admin</span>
         <div style={{ display: "flex", gap: "12px", alignItems: "center" }}>
           <Link
             href="/admin/onboard"

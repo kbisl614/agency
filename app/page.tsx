@@ -43,7 +43,7 @@ export default function Home() {
       <header style={{ background: "var(--bg-primary)", borderBottom: "0.5px solid var(--border-subtle)" }}>
         <nav style={{ display: "flex", justifyContent: "space-between", alignItems: "center", padding: "16px 32px" }}>
           <span style={{ fontSize: "15px", fontWeight: 500, color: "var(--text-primary)", letterSpacing: "-0.3px" }}>
-            Fieldline AI
+            Workfloor
           </span>
           <div style={{ display: "flex", gap: "20px", alignItems: "center" }}>
             <button
@@ -468,7 +468,7 @@ export default function Home() {
 
       {/* ── FOOTER ── */}
       <footer style={{ background: "#111E2E", padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
-        <span style={{ fontSize: "12px", color: "#6A7D8E" }}>Fieldline AI · Cedar Rapids, IA</span>
+        <span style={{ fontSize: "12px", color: "#6A7D8E" }}>Workfloor · Cedar Rapids, IA</span>
         <span style={{ fontSize: "12px", color: "#6A7D8E" }}>AI operations for HVAC contractors</span>
       </footer>
     </>

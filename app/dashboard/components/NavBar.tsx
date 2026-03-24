@@ -16,7 +16,7 @@ export default function NavBar({ businessName }: { businessName: string }) {
           display: "flex", alignItems: "center", justifyContent: "center",
           fontSize: 13, fontWeight: 700, color: "#fff", flexShrink: 0,
         }}>F</div>
-        Fieldline AI
+        Workfloor
       </div>
       <div style={{ display: "flex", alignItems: "center", gap: 20, fontSize: 13, color: "#6a7d8e" }}>
         <div style={{ display: "flex", alignItems: "center", gap: 6, fontSize: 12, color: "#4ade80" }}>

@@ -2,7 +2,7 @@ import Link from "next/link";
 import type { Metadata } from "next";
 
 export const metadata: Metadata = {
-  title: "You're All Set | Fieldline AI",
+  title: "You're All Set | Workfloor",
   description: "We'll be in touch today to get everything connected and start your free trial.",
   robots: {
     index: false,

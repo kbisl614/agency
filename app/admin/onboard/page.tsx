@@ -81,7 +81,7 @@ export default function OnboardPage() {
           height: "60px",
         }}
       >
-        <span style={{ color: "#FAFAF8", fontWeight: 700, fontSize: "16px" }}>Fieldline AI — Admin</span>
+        <span style={{ color: "#FAFAF8", fontWeight: 700, fontSize: "16px" }}>Workfloor — Admin</span>
         <button
           onClick={() => router.push("/admin")}
           style={{
