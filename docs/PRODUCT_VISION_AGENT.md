@@ -129,7 +129,7 @@ This is not just better automation. **This is a permanently retained partnership
 
 ### **Phase 1: Event-Driven**
 ```
-Twilio/Jobber → Webhook → n8n Workflow → FastAPI (Claude) → SMS/Supabase
+SignalWire/Jobber → Webhook → n8n Workflow → Claude (HTTP node) → SMS/Supabase
 (No agent reasoning, just rules-based execution)
 ```
 
@@ -237,7 +237,7 @@ Wait 2 years? It becomes commoditized and margins collapse.
 Each Phase 1 workflow is designed to be callable by the agent:
 
 **After-hours capture workflow:**
-- Phase 1: Triggered by Twilio webhook
+- Phase 1: Triggered by SignalWire webhook
 - Phase 2: **Agent can also trigger it** — "Send recovery SMS to these customers"
 - Phase 3: Agent analyzes effectiveness — "This message converts 45% better at 8pm than 6pm"
 

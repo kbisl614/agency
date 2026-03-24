@@ -1,9 +1,3 @@
-> **Note:** Feature tier mapping below predates the current 4-agent model.
-> Current agent structure: Concierge → Closer → Dispatcher → Strategist.
-> See `agency-context/agency_AI_MASTER.md` for current tier definitions.
-
----
-
 # Market Research Integration — What Changed
 
 **Date:** 2026-03-14
@@ -58,7 +52,7 @@
 1. ✅ After-hours lead capture SMS response
 2. ✅ Missed call → SMS recovery (NEW from market research)
 3. ✅ Audit trail dashboard showing ROI
-4. Total: 3 workflows + FastAPI backend + basic dashboard
+4. Total: 3 workflows + basic dashboard
 
 ### **Phase 2 (After First Client)**
 1. Speed-to-lead dashboard metric
@@ -121,7 +115,7 @@ This was surfaced unprompted in contractor research and wasn't in the original L
 
 ### Once Approved:
 1. Use writing-plans skill to break Phase 1 into implementation tasks
-2. Start with FastAPI backend setup (Chunk 1)
+2. Start with n8n workflow setup and Supabase schema (Chunk 1)
 3. Build n8n workflows (Chunks 2)
 4. Deploy Mission Control dashboard (Chunk 3)
 5. Demo to first prospect (who should be a missed call pain customer)
@@ -131,7 +125,7 @@ This was surfaced unprompted in contractor research and wasn't in the original L
 ## What's Unchanged
 
 - Layer 1 design spec is still valid (just reprioritized)
-- Tech stack (FastAPI, n8n, Twilio, Airtable → Supabase) unchanged
+- Tech stack (n8n, SignalWire, Supabase) unchanged
 - Claude prompts from design spec still usable
 - Orchestrator hub pattern still core to architecture
 - Phase 2 and beyond still valid (just different timing)

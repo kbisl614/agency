@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
+> This document contains outdated information. See current reference below.
+> **Current reference:** `agency-context/agency_AI_MASTER.md`
+> Preserved for session history only.
+
+---
+
 **PLAN 2: ROI & MARKET DIFFERENTIATION**
 
 Go-to-Market Strategy & Revenue Justification

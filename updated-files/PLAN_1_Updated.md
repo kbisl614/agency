@@ -1,3 +1,10 @@
+> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
+> This document contains outdated information. See current reference below.
+> **Current reference:** `agency-context/agency_AI_MASTER.md`
+> Preserved for session history only.
+
+---
+
 **PLAN 1: TECHNICAL ARCHITECTURE & PRODUCT STACK**
 
 AI Implementation Partner --- Autonomous Revenue Systems

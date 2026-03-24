@@ -1,10 +1,3 @@
-> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
-> This document contains outdated information. See current reference below.
-> **Current reference:** `agency-context/agency_AI_MASTER.md`
-> Preserved for session history only.
-
----
-
 ---
 name: Feature Prioritization & Implementation Mapping
 description: Maps market research (contractor-validated pain) to Layer 1 agents by tier. Defines what builds in Phase 1 (Tier 1 only), Phase 2 (Tier 2), and Phase 3+ (Tier 3). Source of truth for feature prioritization.
@@ -27,7 +20,7 @@ type: spec
 - **Contractor pain:** *"Leads that arrive after 7pm disappear by 8am."*
 - **ROI:** 10 recovered leads/month @ $150 each = **$1,500/month**
 - **Market validation:** ACCA data: 78% of homeowners choose the first responder
-- **Build requirement:** n8n webhook → Twilio SMS → Airtable → Claude decision
+- **Build requirement:** n8n webhook → SignalWire SMS → Supabase → Claude decision
 - **Phase 1 demo:** YES — this is the hero feature
 - **Pitch position:** Lead with it on landing page
 
@@ -38,7 +31,7 @@ type: spec
 - **Contractor pain:** *"27% of all calls go unanswered. 13 missed calls/month. $3,900 in lost revenue."*
 - **ROI:** Immediate recovery of missed daytime calls = **$3,900/month**
 - **Market validation:** Unprompted mention in contractor research = high pain
-- **Build requirement:** Jobber webhook (missed call) → SMS response within 60 sec → Airtable
+- **Build requirement:** Jobber/SignalWire webhook (missed call) → SMS response within 60 sec → Supabase
 - **Phase 1 demo:** YES — essential part of hero 1-2 punch
 - **Pitch position:** Lead with this alongside after-hours capture
 - **Technical complexity:** Trivial (one webhook trigger, one SMS send)
@@ -46,11 +39,11 @@ type: spec
 ---
 
 ### ✅ **Audit Trail + ROI Logging**
-- **Component:** Airtable Actions table + Mission Control dashboard
+- **Component:** Supabase actions table + Mission Control dashboard
 - **Contractor pain:** *"Tools that show clear ROI get renewed. Tools that don't, get canceled."*
 - **ROI:** Indirect (retention + month 2-4 renewals) = **drives 80%+ year 1 revenue**
 - **Market validation:** Industry research: contractor retention depends on visible ROI proof
-- **Build requirement:** Every n8n workflow logs action to Airtable Actions table; dashboard polls every 10 sec
+- **Build requirement:** Every n8n workflow logs action to Supabase actions table; dashboard reads via Supabase client
 - **Phase 1 demo:** YES — show action log in dashboard as proof of performance
 - **Pitch position:** Don't lead with it, show in demo as proof
 
@@ -75,7 +68,7 @@ Real features, validated by research, but lower urgency. Pitch them as part of f
 - **Layer 1 Agent:** N/A (dashboard feature)
 - **Contractor pain:** Response time visibility = proof of performance
 - **ROI:** Indirect (retention + upsell when before/after comparison is dramatic)
-- **Build requirement:** Pull timestamps from Airtable, calculate average response time, display on dashboard
+- **Build requirement:** Pull timestamps from Supabase, calculate average response time, display on dashboard
 - **Phase 1 demo:** NO — Phase 2
 - **Pitch position:** Show in demo as proof, don't lead with it
 
@@ -83,7 +76,7 @@ Real features, validated by research, but lower urgency. Pitch them as part of f
 - **Layer 1 Agent:** Daily Summary (Agent 9 in original design)
 - **Contractor pain:** *"Saved us about 40 hours a month"* (time awareness)
 - **ROI:** Indirect (retention + morning reminder of ROI)
-- **Build requirement:** Scheduled task → Query Actions table from yesterday → Claude summary → Email
+- **Build requirement:** Scheduled task → Query Supabase actions from yesterday → Claude summary → Email
 - **Phase 1 demo:** NO — Phase 2
 - **Pitch position:** Close the demo with it: *"Every morning at 7 AM, you get a summary of everything that happened."*
 

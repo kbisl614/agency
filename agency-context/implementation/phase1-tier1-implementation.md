@@ -1,30 +1,26 @@
-> ⚠️ **SUPERSEDED — DO NOT USE AS REFERENCE**
-> This document contains outdated information. See current reference below.
-> **Current reference:** `agency-context/agency_AI_MASTER.md`
-> Preserved for session history only.
-
----
-
 ---
 name: Phase 1 Implementation Plan — Tier 1 Only (Hero 1-2 Punch)
-description: Build 3 Tier 1 workflows (After-hours capture + Missed call recovery + Audit trail) + FastAPI backend + basic Mission Control dashboard. Market research validated. First client deliverable.
+description: ARCHIVED — Originally written for FastAPI + Airtable architecture (now archived). Current architecture uses n8n + Supabase + SignalWire. See docs/WORKFLOW_BUILD_COMPLETE.md for current state.
 type: plan
+status: archived
 ---
+
+> ⚠️ **ARCHIVED PLAN** — This plan references FastAPI and Airtable, both of which have been replaced. Current tech stack is n8n (no separate backend), Supabase (all data), SignalWire (SMS). The two workflows are already built — see `docs/WORKFLOW_BUILD_COMPLETE.md`.
 
 # Phase 1: HVAC AI Operations — Hero 1-2 Punch Demo
 
 > **For agentic workers:** Use superpowers:subagent-driven-development to implement this plan. Steps use checkbox (`- [ ]`) syntax.
 
-**Goal:** Build a production-ready demo showing the hero 1-2 punch: after-hours leads are captured via SMS + daytime missed calls are recovered via SMS + all actions logged to Airtable + ROI visible in dashboard. First client deliverable.
+**Goal:** Build a production-ready demo showing the hero 1-2 punch: after-hours leads are captured via SMS + daytime missed calls are recovered via SMS + all actions logged to Supabase + ROI visible in dashboard. First client deliverable.
 
 **Architecture:**
 - **Frontend:** Next.js Mission Control dashboard (real-time action log, ROI metrics)
-- **Backend:** FastAPI with Claude API integration for lead qualification + missed call classification
+- **Backend:** n8n with Claude API integration for lead qualification + missed call classification
 - **Orchestration:** n8n workflows: (1) After-hours SMS → Claude qualification, (2) Missed call event → SMS response
-- **Data:** Airtable (3 tables: Leads, Actions, Waitlist)
-- **Messaging:** Twilio for all SMS
+- **Data:** Supabase (3 tables: Leads, Actions, Waitlist)
+- **Messaging:** SignalWire for all SMS
 
-**Tech Stack:** FastAPI, Claude API (claude-sonnet-4-20250514), Airtable, Twilio, n8n, Next.js, Python 3.11+
+**Tech Stack:** n8n, Claude API (claude-sonnet-4-20250514), Supabase, SignalWire, n8n, Next.js, Python 3.11+
 
 **Success Criteria:**
 - ✅ Test customer sends SMS after 7pm → gets response within 2 seconds
@@ -40,7 +36,7 @@ type: plan
 ```
 /
 ├── backend/                          (NEW)
-│   ├── main.py                       ← FastAPI app entry
+│   ├── main.py                       ← n8n app entry
 │   ├── requirements.txt               ← Python dependencies
 │   ├── .env.example                   ← Environment template
 │   ├── config.py                      ← Settings/config
@@ -51,7 +47,7 @@ type: plan
 │   └── services/
 │       ├── __init__.py
 │       ├── claude_service.py          ← Claude API calls
-│       ├── airtable_service.py        ← Airtable CRUD
+│       ├── airtable_service.py        ← Supabase CRUD
 │       └── twilio_service.py          ← SMS sending
 ├── app/                              (EXISTING - Next.js)
 │   ├── mission-control/              (NEW)
@@ -74,18 +70,18 @@ type: plan
 
 ### **TIER 1 Workflow #1: After-Hours Lead Capture (SMS Response to Evening Leads)**
 
-**Trigger:** Twilio webhook (customer SMS after 7pm)
+**Trigger:** SignalWire webhook (customer SMS after 7pm)
 
 **Flow:**
-1. Twilio receives SMS → POST to n8n webhook
+1. SignalWire receives SMS → POST to n8n webhook
 2. n8n extracts: `{ phone, message, timestamp }`
-3. n8n calls FastAPI: `POST /leads/qualify` with customer message
+3. n8n calls n8n: `POST /leads/qualify` with customer message
 4. Claude classifies: urgency (1-10) + service type + response text
 5. If confidence > 0.85: send SMS response + create Lead record
 6. If confidence ≤ 0.85: log to Actions with status "human_review"
-7. All actions logged to Airtable Actions table
+7. All actions logged to Supabase Actions table
 
-**FastAPI Endpoint:** `POST /leads/qualify`
+**n8n Endpoint:** `POST /leads/qualify`
 ```python
 {
   "phone": "+1234567890",
@@ -106,18 +102,18 @@ type: plan
 
 ### **TIER 1 Workflow #2: Missed Call → SMS Recovery (Recover Daytime Missed Calls)**
 
-**Trigger:** Jobber missed call event (or Twilio webhook if set up)
+**Trigger:** Jobber missed call event (or SignalWire webhook if set up)
 
 **Flow:**
-1. Missed call detected (Jobber event or Twilio missed call webhook)
+1. Missed call detected (Jobber event or SignalWire missed call webhook)
 2. Extract: `{ phone, timestamp }`
-3. n8n calls FastAPI: `POST /webhooks/missed-call`
+3. n8n calls n8n: `POST /webhooks/missed-call`
 4. Claude classifies: should we send SMS? (intent: likely lead)
 5. Send SMS within 60 seconds: *"Hey, we just missed your call — what's up with your system? We'll get back to you within the hour."*
 6. Create Leads record with status "missed_call_recovery"
 7. Log action to Actions table
 
-**FastAPI Endpoint:** `POST /webhooks/missed-call`
+**n8n Endpoint:** `POST /webhooks/missed-call`
 ```python
 {
   "phone": "+1234567890",
@@ -138,7 +134,7 @@ type: plan
 
 **Trigger:** Every action from workflows 1 & 2
 
-**What gets logged to Airtable Actions table:**
+**What gets logged to Supabase Actions table:**
 - `action_id`: unique ID
 - `timestamp`: when action occurred
 - `action_type`: "sms_sent" | "lead_created" | "human_review_needed" | "sms_failed"
@@ -150,7 +146,7 @@ type: plan
 - `lead_id`: link to Lead record if applicable
 
 **Dashboard Display:**
-- Last 10 actions in real-time (polling Airtable every 10 seconds)
+- Last 10 actions in real-time (polling Supabase every 10 seconds)
 - Summary stats: "X actions taken today | $Y revenue recovered | Z leads in pipeline"
 - Filter by action type + date range
 
@@ -158,9 +154,9 @@ type: plan
 
 ## Detailed Implementation Steps
 
-### **Chunk 1: FastAPI Backend Setup**
+### **Chunk 1: n8n Backend Setup**
 
-#### **Task 1: Initialize FastAPI project**
+#### **Task 1: Initialize n8n project**
 
 Files to create:
 - `backend/requirements.txt`
@@ -191,7 +187,7 @@ Two endpoints:
    - Output: should_send (bool), response text, confidence
    - Prompt: "This person just missed a call. Should we send them an SMS?"
 
-#### **Task 3: Implement Airtable service**
+#### **Task 3: Implement Supabase service**
 
 **File:** `backend/services/airtable_service.py`
 
@@ -200,14 +196,14 @@ Three methods:
 2. `log_action(action_type, description, agent_name, revenue_impact, confidence, success, lead_id)`
 3. `query_leads_by_phone(phone)` — for missed call deduplication
 
-#### **Task 4: Implement Twilio service**
+#### **Task 4: Implement SignalWire service**
 
 **File:** `backend/services/twilio_service.py`
 
 One method:
 - `send_sms(to_phone, message_text)` → returns SMS SID or error
 
-#### **Task 5: Create FastAPI routes**
+#### **Task 5: Create n8n routes**
 
 **File:** `backend/routes/leads.py`
 - `POST /leads/qualify` — after-hours lead capture
@@ -215,10 +211,10 @@ One method:
 **File:** `backend/routes/webhooks.py`
 - `POST /webhooks/missed-call` — missed call recovery
 
-#### **Task 6: Create main FastAPI app**
+#### **Task 6: Create main n8n app**
 
 **File:** `backend/main.py`
-- Initialize FastAPI
+- Initialize n8n
 - Mount routes
 - Error handling
 - Logging
@@ -231,39 +227,39 @@ One method:
 
 **Workflow File:** `n8n/tier1_after_hours_lead_capture.json`
 **Purpose:** Respond to SMS leads received after business hours (7pm+) with instant qualification and SMS response
-**Data Source:** Twilio webhook (inbound SMS)
+**Data Source:** SignalWire webhook (inbound SMS)
 
 Nodes (in order):
-1. Webhook trigger (Twilio POST)
+1. Webhook trigger (SignalWire POST)
 2. Extract phone + message + timestamp
-3. HTTP POST to FastAPI `/leads/qualify`
+3. HTTP POST to n8n `/leads/qualify`
 4. Conditional: confidence > 0.85?
-   - YES: Create Lead record in Airtable + Send SMS + Log action (success)
+   - YES: Create Lead record in Supabase + Send SMS + Log action (success)
    - NO: Log action (human_review_needed) → STOP
 5. Error handler: log any failures
 
-**Testing:** Send SMS to Twilio number, verify response within 2 seconds + Airtable updated
+**Testing:** Send SMS to SignalWire number, verify response within 2 seconds + Supabase updated
 
 #### **Task 8: Build n8n workflow — TIER 1: Missed Call → SMS Recovery**
 
 **Workflow File:** `n8n/tier1_missed_call_recovery_sms.json`
 **Purpose:** Automatically send SMS to anyone who missed a call (27% of all calls = $3,900/month recovery)
-**Data Source:** Jobber missed call webhook OR Twilio missed call event
+**Data Source:** Jobber missed call webhook OR SignalWire missed call event
 
 Nodes (in order):
-1. Webhook trigger (Jobber missed call event OR Twilio)
+1. Webhook trigger (Jobber missed call event OR SignalWire)
 2. Extract phone + timestamp
-3. Query Airtable: does this phone already have a lead from today?
+3. Query Supabase: does this phone already have a lead from today?
    - If YES: skip (no duplicate SMS)
    - If NO: proceed
-4. HTTP POST to FastAPI `/webhooks/missed-call`
+4. HTTP POST to n8n `/webhooks/missed-call`
 5. If should_send = true:
    - Send SMS to customer
    - Create Lead record (status: "missed_call_recovery")
    - Log action (success)
 6. Error handler: log failures
 
-**Testing:** Trigger a test missed call, verify SMS response within 60 seconds + Airtable updated
+**Testing:** Trigger a test missed call, verify SMS response within 60 seconds + Supabase updated
 
 ---
 
@@ -279,20 +275,20 @@ Components:
    - Actions today (number)
    - Revenue recovered today (sum of revenue_impact)
    - Leads in pipeline (count of status = "awaiting_confirmation")
-3. **Real-time action log** (poll Airtable every 10s):
+3. **Real-time action log** (poll Supabase every 10s):
    - Table: timestamp | action type | description | agent | confidence | revenue | status
    - Last 10 actions visible
    - Expandable rows for full details
 4. **Filters:** date range + action type
 5. **Footer:** "Last updated: [timestamp]"
 
-**Data source:** Direct Airtable query (no FastAPI needed for dashboard)
+**Data source:** Direct Supabase query (no n8n needed for dashboard)
 
 ---
 
-### **Chunk 4: Airtable Schema Setup**
+### **Chunk 4: Supabase Schema Setup**
 
-#### **Task 10: Create/update Airtable schema**
+#### **Task 10: Create/update Supabase schema**
 
 **Table 1: Leads**
 - `lead_id` (primary key)
@@ -316,7 +312,7 @@ Components:
 - `success` (boolean)
 - `error_message` (text, if failed)
 - `lead_id` (link to Leads table, nullable)
-- `sms_sid` (Twilio identifier, if SMS sent)
+- `sms_sid` (SignalWire identifier, if SMS sent)
 
 **Table 3: Waitlist** (for future Cancellation Fill feature)
 - `waitlist_id` (primary key)
@@ -341,11 +337,11 @@ Add:
 # Claude API
 ANTHROPIC_API_KEY=sk-ant-...
 
-# Airtable
+# Supabase
 AIRTABLE_API_KEY=pat...
 AIRTABLE_BASE_ID=appXXX...
 
-# Twilio
+# SignalWire
 TWILIO_ACCOUNT_SID=ACxx...
 TWILIO_AUTH_TOKEN=auth...
 TWILIO_PHONE_NUMBER=+1...
@@ -360,7 +356,7 @@ FRONTEND_PORT=3000
 DEBUG=false
 ```
 
-#### **Task 12: Deploy FastAPI backend**
+#### **Task 12: Deploy n8n backend**
 
 Options:
 - Render: Free tier for testing, paid for production ($12/month)
@@ -383,16 +379,16 @@ Recommended: **Vercel** (native Next.js support)
 
 ### **Before Demo:**
 
-- [ ] FastAPI backend running locally
+- [ ] n8n backend running locally
 - [ ] All 3 Claude service prompts tested
-- [ ] Airtable tables created + populated with test data
-- [ ] Twilio number configured + can send/receive SMS
+- [ ] Supabase tables created + populated with test data
+- [ ] SignalWire number configured + can send/receive SMS
 - [ ] n8n workflows deployed + firing correctly
 
 ### **Demo Flow:**
 
-- [ ] Send test SMS after 7pm → verify response within 2 sec + Airtable logged
-- [ ] Trigger missed call → verify SMS response within 60 sec + Airtable logged
+- [ ] Send test SMS after 7pm → verify response within 2 sec + Supabase logged
+- [ ] Trigger missed call → verify SMS response within 60 sec + Supabase logged
 - [ ] Open Mission Control dashboard → verify both actions visible + stats calculated
 - [ ] Show audit trail: 2 actions logged with confidence scores + revenue impact
 - [ ] Calculate ROI: 2 leads × $150 = $300 value captured
@@ -404,10 +400,10 @@ Recommended: **Vercel** (native Next.js support)
 **Phase 1 is "done" when:**
 1. ✅ After-hours SMS response working (2 sec latency)
 2. ✅ Missed call SMS recovery working (60 sec latency)
-3. ✅ All actions logged to Airtable + visible in dashboard
+3. ✅ All actions logged to Supabase + visible in dashboard
 4. ✅ Claude confidence scores working (0.85 threshold enforced)
 5. ✅ ROI calculation accurate (revenue_impact summing correctly)
-6. ✅ FastAPI backend deployed (not just local)
+6. ✅ n8n backend deployed (not just local)
 7. ✅ Mission Control dashboard deployed (Vercel)
 8. ✅ First customer can use it (Jobber integration for Phase 2)
 
@@ -434,18 +430,18 @@ Recommended: **Vercel** (native Next.js support)
 **Status:** Implementation plan ready. Awaiting approval before starting Chunk 1.
 
 **Dependencies:**
-- [ ] FastAPI/Python environment set up
-- [ ] Airtable base created
-- [ ] Twilio account active + configured
+- [ ] n8n/Python environment set up
+- [ ] Supabase base created
+- [ ] SignalWire account active + configured
 - [ ] n8n instance running (self-hosted or n8n Cloud)
 - [ ] Vercel/Railway accounts created
 - [ ] All API keys in `.env.local`
 
 **Estimated Timeline:**
-- Chunk 1 (FastAPI backend): 2-3 days
+- Chunk 1 (n8n backend): 2-3 days
 - Chunk 2 (n8n workflows): 1-2 days
 - Chunk 3 (Mission Control dashboard): 1-2 days
-- Chunk 4 (Airtable setup): 2-4 hours
+- Chunk 4 (Supabase setup): 2-4 hours
 - Chunk 5 (Deployment): 2-4 hours
 - **Total: ~1 week for experienced team, ~2 weeks for first-time setup**
 

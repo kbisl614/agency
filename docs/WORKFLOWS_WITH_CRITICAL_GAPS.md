@@ -1,3 +1,9 @@
+> **Note:** Workflow IDs in this document may be stale.
+> Current IDs: `after_hours_lead_capture = jlWxZ52pFxelh7aU`, `missed_call_recovery_sms = EjrtbF205kPsOCxO`
+> See `agency-context/CLAUDE.md` for current known IDs.
+
+---
+
 # HVAC AI Operations — Complete Workflow Architecture with Critical Gap Resolution
 **Last Updated:** March 14, 2026  
 **Status:** CRITICAL GAPS IDENTIFIED — MUST IMPLEMENT BEFORE FIRST CLIENT
