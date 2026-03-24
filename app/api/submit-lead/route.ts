@@ -93,7 +93,7 @@ export async function POST(request: NextRequest) {
     if (n8nBase) {
       const controller = new AbortController();
       setTimeout(() => controller.abort(), 2000);
-      fetch(`${n8nBase.replace(/\/$/, "")}/webhook/new-lead`, {
+      fetch(`${n8nBase.replace(/\/$/, "")}/webhook/workfloor-new-lead`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
