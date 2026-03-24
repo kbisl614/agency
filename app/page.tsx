@@ -71,7 +71,7 @@ export default function Home() {
               For HVAC contractors with 5–20 techs
             </p>
             <h1 style={{ fontSize: "clamp(28px, 5vw, 46px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.15, marginBottom: "24px" }}>
-              Most HVAC contractors lose $8,600 a month to systems that don't talk to each other. We fix that.
+              AI Operations for HVAC. <span style={{ color: "#E8934A" }}>Set it and forget it.</span>
             </h1>
             <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.75, maxWidth: "520px", marginBottom: "40px" }}>
               We map where your business is leaking money, build the AI that plugs the holes, and run it.
@@ -121,13 +121,13 @@ export default function Home() {
 
         {/* ── HOW IT WORKS ── */}
         <section id="how-it-works" style={{ padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)", background: "var(--bg-primary)" }}>
-          <p style={{ fontSize: "11px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "12px" }}>
+          <p style={{ fontSize: "11px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "12px", textAlign: "center" }}>
             How it works
           </p>
-          <h2 style={{ fontSize: "clamp(20px, 3vw, 28px)", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px" }}>
+          <h2 style={{ fontSize: "clamp(20px, 3vw, 28px)", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px", textAlign: "center" }}>
             Three steps.
           </h2>
-          <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.65, marginBottom: "40px", maxWidth: "440px" }}>
+          <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.65, marginBottom: "40px", textAlign: "center" }}>
             Most contractors are live within a week of their discovery call.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
@@ -158,8 +158,8 @@ export default function Home() {
               </div>
             </div>
 
-            {/* Step 3 — amber border = permanent/ongoing state */}
-            <div style={{ background: "#fff", border: "0.5px solid #E8934A", borderRadius: "10px", padding: "32px" }}>
+            {/* Step 3 */}
+            <div style={{ background: "#fff", border: "0.5px solid var(--border-subtle)", borderRadius: "10px", padding: "32px" }}>
               <div style={{ fontSize: "11px", fontWeight: 600, color: "#E8934A", letterSpacing: "1px", marginBottom: "14px" }}>03</div>
               <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px" }}>
                 It gets smarter. You never fall behind.
@@ -187,7 +187,7 @@ export default function Home() {
             manage on your behalf, and grow alongside you.
           </p>
 
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(300px, 1fr))", gap: "20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
             {[
               {
                 title: "Built specifically for your operation",
@@ -212,6 +212,14 @@ export default function Home() {
               {
                 title: "We keep you current as AI evolves",
                 body: "When better tools and capabilities emerge, we integrate them into your system. You never have to research what's new in AI or worry about falling behind — that's what we're here for.",
+              },
+              {
+                title: "You see what's happening every morning",
+                body: "A plain-English summary hits your phone by 7am — what ran overnight, what was recovered, what's on deck. No dashboards to check. No reports to pull. Just a clear picture of what your AI did while you slept.",
+              },
+              {
+                title: "High-stakes actions always need your approval",
+                body: "The system handles the routine automatically, but anything outside normal bounds stops and waits for you. You stay in control of the decisions that matter — without having to manage the ones that don't.",
               },
             ].map((item) => (
               <div
@@ -239,7 +247,7 @@ export default function Home() {
 
         {/* ── WHAT TO EXPECT (replaces guarantee) ── */}
         <section style={{ padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)", background: "var(--bg-primary)" }}>
-          <div style={{ background: "#F5F2EE", border: "0.5px solid #DDD0C0", borderRadius: "10px", padding: "clamp(28px, 4vw, 48px)", maxWidth: "660px" }}>
+          <div style={{ background: "#F5F2EE", border: "1.5px solid #E8934A", borderRadius: "10px", padding: "clamp(28px, 4vw, 48px)", maxWidth: "660px", margin: "0 auto" }}>
             <p style={{ fontSize: "11px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "12px" }}>
               How it works for you
             </p>
@@ -318,7 +326,7 @@ export default function Home() {
                 </p>
               </div>
             ) : (
-              <div style={{ background: "var(--bg-secondary)", borderRadius: "10px", padding: "clamp(24px, 4vw, 40px)", border: "0.5px solid var(--border-subtle)" }}>
+              <div style={{ background: "var(--bg-secondary)", borderRadius: "10px", padding: "clamp(24px, 4vw, 40px)", border: "1.5px solid #E8934A" }}>
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
 
                   <div>

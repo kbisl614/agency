@@ -14,7 +14,7 @@ export default function Hero() {
             For HVAC contractors with 5–20 techs
           </p>
           <h1 style={{ fontSize: "clamp(28px, 5vw, 46px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.15, marginBottom: "20px" }}>
-            We text back every missed call while you&apos;re on a job.
+            <span style={{ color: "#E8934A" }}>AI Operations for HVAC.</span> Set it and forget it.
           </h1>
           <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.7, maxWidth: "520px", marginBottom: "32px" }}>
             We build AI systems that plug into Jobber, ServiceTitan, or HouseCall Pro and handle lead response, schedule recovery, and admin work — 24/7. You don&apos;t touch the technology. We build it, run it, and keep it current.
