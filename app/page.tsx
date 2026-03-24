@@ -65,35 +65,103 @@ export default function Home() {
       <main>
 
         {/* ── HERO ── */}
-        <section style={{ background: "#1A2535", padding: "clamp(72px, 10vw, 112px) clamp(20px, 5vw, 72px)" }}>
-          <div style={{ maxWidth: "640px" }}>
-            <p style={{ fontSize: "12px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "20px" }}>
-              For HVAC contractors with 5–20 techs
-            </p>
-            <h1 style={{ fontSize: "clamp(28px, 5vw, 46px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.15, marginBottom: "24px" }}>
-              <span style={{ color: "#E8934A" }}>AI Operations for HVAC.</span> Set it and forget it.
-            </h1>
-            <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.75, maxWidth: "520px", marginBottom: "40px" }}>
-              We map where your business is leaking money, build the AI that plugs the holes, and run it.
-              Discovery call first. Custom-built for your operation. You see results every morning — you never touch a setting.
-            </p>
-            <div style={{ display: "flex", alignItems: "center", gap: "20px", flexWrap: "wrap" }}>
+        <section style={{ background: "#1A2535", padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)" }}>
+          <div style={{ display: "flex", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start", flexWrap: "wrap" }}>
+
+            {/* Left: headline + copy */}
+            <div style={{ flex: "1 1 340px", maxWidth: "560px" }}>
+              <p style={{ fontSize: "12px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "20px" }}>
+                For HVAC contractors with 5–20 techs
+              </p>
+              <h1 style={{ fontSize: "clamp(28px, 4vw, 46px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.15, marginBottom: "24px" }}>
+                <span style={{ color: "#E8934A" }}>AI Operations for HVAC.</span> Set it and forget it.
+              </h1>
+              <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.75, marginBottom: "32px" }}>
+                We map where your business is leaking money, build the AI that plugs the holes, and run it.
+                Discovery call first. Custom-built for your operation. You see results every morning — you never touch a setting.
+              </p>
               <button
-                style={{ fontSize: "14px", fontWeight: 500, background: "#E8934A", color: "#fff", border: "none", padding: "14px 32px", borderRadius: "6px", cursor: "pointer" }}
-                onClick={() => document.getElementById("book-call")?.scrollIntoView({ behavior: "smooth" })}
-              >
-                Book a discovery call
-              </button>
-              <button
-                style={{ fontSize: "13px", color: "#9AAABB", background: "none", border: "none", cursor: "pointer" }}
+                style={{ fontSize: "13px", color: "#9AAABB", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                 onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
               >
                 See how it works →
               </button>
             </div>
-            <p style={{ fontSize: "13px", color: "#6A7D8E", marginTop: "20px", lineHeight: 1.6 }}>
-              30-minute call. We map your operation and tell you honestly how AI can be implemented and scaled.
-            </p>
+
+            {/* Right: compact booking form */}
+            <div style={{ flex: "1 1 320px", maxWidth: "420px" }}>
+              <div style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid #E8934A", borderRadius: "10px", padding: "28px" }}>
+                <p style={{ fontSize: "13px", fontWeight: 600, color: "#F5F3EE", marginBottom: "4px" }}>Book a discovery call</p>
+                <p style={{ fontSize: "12px", color: "#6A7D8E", marginBottom: "20px", lineHeight: 1.5 }}>30 minutes. We map your operation and tell you honestly if we're a fit.</p>
+
+                {submitted ? (
+                  <div style={{ textAlign: "center", padding: "24px 0" }}>
+                    <div style={{ fontSize: "24px", marginBottom: "10px" }}>✓</div>
+                    <p style={{ fontSize: "14px", fontWeight: 500, color: "#F5F3EE", marginBottom: "6px" }}>You're on the calendar.</p>
+                    <p style={{ fontSize: "13px", color: "#6A7D8E" }}>We'll confirm your time by end of day.</p>
+                  </div>
+                ) : (
+                  <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "14px" }}>
+                    <input
+                      type="text"
+                      placeholder="Business name"
+                      className="input-field"
+                      required
+                      value={formData.business_name}
+                      onChange={(e) => setFormData({ ...formData, business_name: e.target.value })}
+                    />
+                    <input
+                      type="text"
+                      placeholder="Your name"
+                      className="input-field"
+                      required
+                      value={formData.owner_name}
+                      onChange={(e) => setFormData({ ...formData, owner_name: e.target.value })}
+                    />
+                    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "12px" }}>
+                      <input
+                        type="email"
+                        placeholder="Email"
+                        className="input-field"
+                        required
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                      />
+                      <input
+                        type="tel"
+                        placeholder="Phone"
+                        className="input-field"
+                        required
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                      />
+                    </div>
+                    <select
+                      className="input-field"
+                      required
+                      value={formData.industry}
+                      onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
+                    >
+                      <option value="">Scheduling software</option>
+                      <option value="Jobber">Jobber</option>
+                      <option value="ServiceTitan">ServiceTitan</option>
+                      <option value="HouseCall Pro">HouseCall Pro</option>
+                      <option value="Other / not sure">Other / not sure</option>
+                    </select>
+                    {error && <p style={{ fontSize: "12px", color: "#E85A4A" }}>{error}</p>}
+                    <button
+                      type="submit"
+                      disabled={isSubmitting}
+                      style={{ width: "100%", padding: "13px", background: isSubmitting ? "#C05C1E" : "#E8934A", color: "#fff", border: "none", borderRadius: "6px", cursor: isSubmitting ? "not-allowed" : "pointer", fontSize: "14px", fontWeight: 600 }}
+                    >
+                      {isSubmitting ? "Sending..." : "Book my discovery call"}
+                    </button>
+                    <p style={{ textAlign: "center", fontSize: "11px", color: "#566677" }}>No contracts. No pressure.</p>
+                  </form>
+                )}
+              </div>
+            </div>
+
           </div>
         </section>
 
