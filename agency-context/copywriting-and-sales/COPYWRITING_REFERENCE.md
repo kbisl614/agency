@@ -6,7 +6,7 @@
 
 ## What We Are (Say This First, Internally and Externally)
 
-**Productized agency. Not SaaS.**
+**AI implementation partner. Not SaaS.**
 
 We are a retained AI operations partner for HVAC contractors. We get on a discovery call, learn exactly where their business is leaking money or time, build the AI that fixes it, and run everything indefinitely. They never touch infrastructure. They see outputs every morning.
 

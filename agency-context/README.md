@@ -74,7 +74,7 @@ Drop the entire `agency-context` folder into any Claude Project or Claude Code s
 
 ## Key Facts (Read Before Any Session)
 
-- **Business model:** Productized agency. Not SaaS. Discovery call → custom build → monthly retainer.
+- **Business model:** AI implementation partner. Not SaaS. Discovery call → custom build → monthly retainer.
 - **Niche:** HVAC contractors only. Always.
 - **CRM:** Connects with any CRM the contractor is already using. No lock-in.
 - **Four agents:** Concierge (always first) → Closer → Dispatcher → Strategist. Named internally only — use "agent(s)" in customer copy.

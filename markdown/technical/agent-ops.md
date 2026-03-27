@@ -5,7 +5,7 @@
 
 ## What This Is
 
-A managed AI operations service for HVAC contractors. **Productized agency — not SaaS.** We build and operate custom AI workflows and agents per contractor. They pay a monthly retainer and never configure anything. They see a per-client dashboard showing what the system did.
+A managed AI operations service for HVAC contractors. **AI implementation partner — not SaaS.** We build and operate custom AI workflows and agents per contractor. They pay a monthly retainer and never configure anything. They see a per-client dashboard showing what the system did.
 
 ---
 

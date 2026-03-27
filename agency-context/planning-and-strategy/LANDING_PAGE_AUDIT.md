@@ -8,7 +8,7 @@
 
 ## The Core Problem (State This Up Front)
 
-The page currently reads as a B2B SaaS product page selling a specific automation tool (missed-call texting). The actual business is a **productized agency** selling a **retained AI operations partnership** — custom-scoped on a discovery call, built for each contractor's specific bottlenecks, and managed indefinitely.
+The page currently reads as a B2B SaaS product page selling a specific automation tool (missed-call texting). The actual business is a **AI implementation partner** selling a **retained AI operations partnership** — custom-scoped on a discovery call, built for each contractor's specific bottlenecks, and managed indefinitely.
 
 Every copy and layout fix below flows from correcting that single misalignment.
 

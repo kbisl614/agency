@@ -6,7 +6,7 @@
 
 ## What We Are
 
-**Productized agency — not SaaS.** We are an AI implementation partner for HVAC contractors. We get on a discovery call, learn exactly where their business is leaking money or time, build custom AI workflows and agents that fix those specific bottlenecks, and give them a personal dashboard to watch the results. We manage and operate everything. They never touch infrastructure.
+**AI implementation partner — not SaaS.** We are an AI implementation partner for HVAC contractors. We get on a discovery call, learn exactly where their business is leaking money or time, build custom AI workflows and agents that fix those specific bottlenecks, and give them a personal dashboard to watch the results. We manage and operate everything. They never touch infrastructure.
 
 Not a software subscription. Not a DIY tool. Not a one-size-fits-all package. A retained AI operations partner that builds exactly what each contractor needs.
 

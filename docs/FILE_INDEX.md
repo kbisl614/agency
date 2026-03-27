@@ -118,7 +118,7 @@
 ## Current Confirmed Decisions (Source Of Truth For Rewrites)
 
 ### Business Model
-- Productized agency — not SaaS
+- AI implementation partner — not SaaS
 - Retained partnership, monthly retainer
 
 ### Pricing
