@@ -1,0 +1,1781 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Floor — Command Center</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #162234;
+    --navy-light: #1e2f42;
+    --amber: #e8a020;
+    --amber-dim: #a06c10;
+    --amber-glow: rgba(232,160,32,0.10);
+    --coral: #d95f3b;
+    --green: #3aaa6e;
+    --blue: #3a8faa;
+    --text: #e8e4dc;
+    --text-dim: #8a9ab0;
+    --text-muted: #4a5a6e;
+    --border: rgba(255,255,255,0.07);
+    --border-amber: rgba(232,160,32,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    height: 100vh;
+    overflow: hidden;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: 52px 1fr;
+  }
+
+  /* ── HEADER */
+  header {
+    grid-column: 1 / -1;
+    background: var(--navy-mid);
+    border-bottom: 1px solid var(--border);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    z-index: 10;
+  }
+  .logo { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:700; color:var(--amber); letter-spacing:.06em; text-transform:uppercase; }
+  .header-tag { font-size:11px; font-family:'DM Mono',monospace; color:var(--text-muted); border:1px solid var(--border); padding:3px 8px; border-radius:3px; letter-spacing:.05em; }
+  .header-right { margin-left:auto; display:flex; align-items:center; gap:16px; }
+  .header-date { font-size:11px; font-family:'DM Mono',monospace; color:var(--text-muted); }
+  .status-dot { width:7px; height:7px; border-radius:50%; background:var(--green); animation:pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:.3} }
+
+  /* ── SIDEBAR */
+  nav {
+    background: var(--navy-mid);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    display: flex;
+    flex-direction: column;
+    overflow-y: auto;
+  }
+  .nav-section-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); letter-spacing:.1em; text-transform:uppercase; padding:16px 16px 6px; }
+  .nav-section-label:first-child { padding-top:0; }
+  .nav-item {
+    display:flex; align-items:center; gap:10px;
+    padding:11px 16px; cursor:pointer;
+    border-left:2px solid transparent;
+    transition:all .15s; font-size:13px;
+    color:var(--text-dim); font-weight:500; user-select:none;
+  }
+  .nav-item:hover { background:rgba(255,255,255,.03); color:var(--text); }
+  .nav-item.active { border-left-color:var(--amber); background:var(--amber-glow); color:var(--amber); }
+  .nav-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); min-width:16px; }
+  .nav-item.active .nav-num { color:var(--amber-dim); }
+  .nav-spacer { flex:1; }
+  .nav-footer { padding:12px 16px; border-top:1px solid var(--border); }
+  .nav-footer a { display:flex; align-items:center; gap:8px; font-size:12px; color:var(--text-muted); text-decoration:none; font-family:'DM Mono',monospace; transition:color .15s; }
+  .nav-footer a:hover { color:var(--text-dim); }
+
+  /* ── MAIN */
+  main { overflow-y:auto; position:relative; }
+  .panel { display:none; padding:28px 32px; min-height:100%; }
+  .panel.active { display:block; }
+
+  /* ── BREADCRUMB */
+  .breadcrumb {
+    display:flex; align-items:center; gap:8px;
+    margin-bottom:20px;
+    font-family:'DM Mono',monospace; font-size:11px;
+  }
+  .breadcrumb-back {
+    display:inline-flex; align-items:center; gap:6px;
+    color:var(--amber); cursor:pointer; text-decoration:none;
+    background:var(--amber-glow); border:1px solid var(--border-amber);
+    padding:4px 10px; border-radius:3px; transition:opacity .15s;
+  }
+  .breadcrumb-back:hover { opacity:.8; }
+  .breadcrumb-sep { color:var(--text-muted); }
+  .breadcrumb-current { color:var(--text-muted); }
+
+  /* ── PANEL HEADER */
+  .panel-header { margin-bottom:24px; }
+  .panel-title { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:700; letter-spacing:.04em; text-transform:uppercase; color:var(--text); margin-bottom:4px; }
+  .panel-sub { font-size:12px; color:var(--text-muted); font-family:'DM Mono',monospace; }
+
+  /* ── HUB CARDS (Instagram landing) */
+  .hub-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(260px,1fr)); gap:16px; margin-top:8px; }
+  .hub-card {
+    background:var(--navy-mid); border:1px solid var(--border); border-radius:8px;
+    padding:24px; display:flex; flex-direction:column; gap:12px;
+    transition:border-color .15s;
+  }
+  .hub-card:hover { border-color:var(--border-amber); }
+  .hub-card-icon { font-size:28px; }
+  .hub-card-title { font-family:'Barlow Condensed',sans-serif; font-size:17px; font-weight:700; letter-spacing:.03em; text-transform:uppercase; color:var(--text); }
+  .hub-card-desc { font-size:12px; color:var(--text-muted); line-height:1.5; flex:1; }
+  .hub-card-btn {
+    align-self:flex-start;
+    background:var(--amber); color:var(--navy); border:none;
+    font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700;
+    letter-spacing:.05em; text-transform:uppercase;
+    padding:7px 16px; border-radius:4px; cursor:pointer; transition:opacity .15s;
+    display:inline-flex; align-items:center; gap:6px;
+  }
+  .hub-card-btn:hover { opacity:.85; }
+
+  /* ── STATS BAR */
+  .stats-bar { display:flex; gap:1px; background:var(--border); border:1px solid var(--border); border-radius:6px; overflow:hidden; margin-bottom:20px; }
+  .stat-cell { flex:1; background:var(--navy-mid); padding:12px 16px; text-align:center; }
+  .stat-cell:hover { background:var(--navy-light); }
+  .stat-val { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:700; color:var(--amber); letter-spacing:.02em; display:block; }
+  .stat-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; display:block; margin-top:2px; }
+
+  /* ── FILTERS */
+  .filters { display:flex; gap:10px; margin-bottom:16px; align-items:center; }
+  .filter-input { flex:1; background:var(--navy-mid); border:1px solid var(--border); color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; padding:8px 12px; border-radius:4px; outline:none; transition:border-color .15s; }
+  .filter-input:focus { border-color:var(--border-amber); }
+  .filter-input::placeholder { color:var(--text-muted); }
+  .filter-select { background:var(--navy-mid); border:1px solid var(--border); color:var(--text-dim); font-family:'DM Mono',monospace; font-size:11px; padding:8px 12px; border-radius:4px; outline:none; cursor:pointer; }
+  .filter-select:focus { border-color:var(--border-amber); }
+
+  /* ── TABLE */
+  .table-wrap { border:1px solid var(--border); border-radius:6px; overflow:hidden; }
+  table { width:100%; border-collapse:collapse; font-size:13px; }
+  thead th { background:var(--navy-light); padding:10px 14px; text-align:left; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; font-weight:500; border-bottom:1px solid var(--border); white-space:nowrap; }
+  tbody tr { border-bottom:1px solid var(--border); cursor:pointer; transition:background .1s; }
+  tbody tr:last-child { border-bottom:none; }
+  tbody tr:hover { background:var(--navy-light); }
+  tbody td { padding:10px 14px; color:var(--text-dim); vertical-align:middle; }
+  .td-name { color:var(--text); font-weight:600; }
+  .td-company { color:var(--text-muted); font-size:12px; margin-top:2px; }
+  .td-phone { font-family:'DM Mono',monospace; font-size:12px; }
+  .td-check { color:var(--green); }
+  .td-dash { color:var(--text-muted); }
+
+  /* ── STAGE PILLS */
+  .stage-pill { font-family:'DM Mono',monospace; font-size:10px; padding:3px 8px; border-radius:3px; text-transform:uppercase; letter-spacing:.06em; white-space:nowrap; display:inline-block; }
+  .stage-cold       { background:rgba(74,90,110,.3);   color:var(--text-muted); border:1px solid rgba(74,90,110,.4); }
+  .stage-called     { background:rgba(58,143,170,.15); color:var(--blue);       border:1px solid rgba(58,143,170,.3); }
+  .stage-interested { background:var(--amber-glow);    color:var(--amber);      border:1px solid var(--border-amber); }
+  .stage-demo       { background:rgba(58,170,110,.15); color:var(--green);      border:1px solid rgba(58,170,110,.3); }
+  .stage-won        { background:rgba(58,170,110,.25); color:#5cd98a;           border:1px solid rgba(58,170,110,.5); }
+  .stage-lost       { background:rgba(217,95,59,.15);  color:var(--coral);      border:1px solid rgba(217,95,59,.3); }
+
+  /* ── ACTION BTNS */
+  .actions { display:flex; gap:4px; }
+  .action-btn { font-family:'DM Mono',monospace; font-size:10px; padding:3px 7px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; text-decoration:none; transition:all .15s; }
+  .action-btn:hover { border-color:var(--border-amber); color:var(--amber); }
+
+  /* ── DRAWER */
+  .drawer-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.4); z-index:100; }
+  .drawer-overlay.open { display:block; }
+  .drawer { position:fixed; top:52px; right:0; bottom:0; width:380px; background:var(--navy-mid); border-left:1px solid var(--border); overflow-y:auto; padding:24px; z-index:101; transform:translateX(100%); transition:transform .2s ease; }
+  .drawer.open { transform:translateX(0); }
+  .drawer-close { position:absolute; top:16px; right:16px; background:none; border:none; color:var(--text-muted); font-size:18px; cursor:pointer; padding:4px 8px; }
+  .drawer-close:hover { color:var(--text); }
+  .drawer-lead-name { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:2px; padding-right:32px; }
+  .drawer-lead-company { font-size:13px; color:var(--text-dim); margin-bottom:20px; }
+  .drawer-stage-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+  .drawer-stages { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:20px; }
+  .drawer-stage-btn { font-family:'DM Mono',monospace; font-size:10px; padding:5px 10px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; text-transform:uppercase; letter-spacing:.06em; transition:all .15s; }
+  .drawer-stage-btn:hover { border-color:var(--border-amber); color:var(--amber); }
+  .drawer-stage-btn.active-stage { border-color:var(--amber); background:var(--amber-glow); color:var(--amber); }
+  .drawer-field { margin-bottom:14px; }
+  .drawer-field-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; }
+  .drawer-field-val { font-size:13px; color:var(--text-dim); word-break:break-all; }
+  .drawer-field-val a { color:var(--amber); text-decoration:none; }
+  .drawer-field-val a:hover { text-decoration:underline; }
+  .drawer-notes { width:100%; background:var(--navy); border:1px solid var(--border); color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; padding:10px 12px; border-radius:4px; resize:vertical; min-height:100px; outline:none; transition:border-color .15s; margin-top:4px; }
+  .drawer-notes:focus { border-color:var(--border-amber); }
+  .drawer-divider { border:none; border-top:1px solid var(--border); margin:20px 0; }
+
+  /* ── INSTAGRAM ANALYTICS */
+  .ig-connect-banner { background:var(--amber-glow); border:1px solid var(--border-amber); border-radius:6px; padding:16px 20px; display:flex; align-items:center; gap:14px; margin-bottom:24px; }
+  .ig-connect-icon { font-size:22px; }
+  .ig-connect-text { flex:1; }
+  .ig-connect-text strong { color:var(--amber); font-size:14px; display:block; margin-bottom:2px; }
+  .ig-connect-text span { font-size:12px; color:var(--text-muted); }
+  .ig-connect-btn { background:var(--amber); color:var(--navy); border:none; font-family:'Barlow Condensed',sans-serif; font-size:13px; font-weight:700; letter-spacing:.05em; text-transform:uppercase; padding:8px 16px; border-radius:4px; cursor:pointer; }
+  .stats-cards { display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-bottom:24px; }
+  .stat-card { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:16px 20px; }
+  .stat-card-val { font-family:'Barlow Condensed',sans-serif; font-size:28px; font-weight:700; color:var(--text-muted); }
+  .stat-card-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-top:4px; }
+  .section-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.1em; margin-bottom:12px; }
+  .posts-grid { display:grid; grid-template-columns:repeat(4,1fr); gap:10px; margin-bottom:24px; }
+  .post-card { background:var(--navy-light); border:1px solid var(--border); border-radius:6px; aspect-ratio:9/16; display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px; }
+  .post-card:hover { border-color:var(--border-amber); }
+  .post-emoji { font-size:28px; }
+  .post-likes { font-size:11px; color:var(--text-muted); font-family:'DM Mono',monospace; }
+  .empty-state { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:32px; text-align:center; color:var(--text-muted); font-size:13px; }
+  .empty-state-icon { font-size:28px; margin-bottom:10px; }
+
+  /* ── REELS */
+  .drop-zone { border:2px dashed var(--border); border-radius:8px; padding:40px; text-align:center; cursor:pointer; transition:all .2s; margin-bottom:16px; }
+  .drop-zone:hover, .drop-zone.drag-over { border-color:var(--border-amber); background:var(--amber-glow); }
+  .drop-zone-icon { font-size:32px; margin-bottom:10px; }
+  .drop-zone-text { font-size:14px; color:var(--text-dim); margin-bottom:6px; }
+  .drop-zone-sub { font-size:11px; color:var(--text-muted); font-family:'DM Mono',monospace; }
+  .drop-zone-sub span { color:var(--amber); }
+  #reel-file-input { display:none; }
+  .or-divider { display:flex; align-items:center; gap:12px; margin:16px 0; color:var(--text-muted); font-size:12px; font-family:'DM Mono',monospace; }
+  .or-divider::before, .or-divider::after { content:''; flex:1; height:1px; background:var(--border); }
+  .reel-textarea { width:100%; background:var(--navy-mid); border:1px solid var(--border); color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; padding:12px 14px; border-radius:4px; resize:vertical; min-height:120px; outline:none; transition:border-color .15s; margin-bottom:12px; }
+  .reel-textarea:focus { border-color:var(--border-amber); }
+  .reel-textarea::placeholder { color:var(--text-muted); }
+  .btn-primary { background:var(--amber); color:var(--navy); border:none; font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:10px 24px; border-radius:4px; cursor:pointer; transition:opacity .15s; }
+  .btn-primary:hover { opacity:.85; }
+  .btn-secondary { background:var(--navy-mid); color:var(--amber); border:1px solid var(--border-amber); font-family:'Barlow Condensed',sans-serif; font-size:14px; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:10px 24px; border-radius:4px; cursor:pointer; transition:background .15s; }
+  .btn-secondary:hover { background:var(--amber-glow); }
+  .analysis-output { margin-top:28px; display:none; }
+  .analysis-output.visible { display:block; }
+  .hook-score-block { display:flex; align-items:center; gap:20px; background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:20px 24px; margin-bottom:16px; }
+  .hook-score-num { font-family:'Barlow Condensed',sans-serif; font-size:56px; font-weight:700; line-height:1; min-width:70px; text-align:center; }
+  .hook-score-bar-wrap { flex:1; }
+  .hook-score-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:8px; }
+  .hook-score-bar { height:8px; background:var(--navy-light); border-radius:4px; overflow:hidden; }
+  .hook-score-fill { height:100%; border-radius:4px; transition:width .5s ease; }
+  .hook-score-verdict { font-size:11px; color:var(--text-muted); font-family:'DM Mono',monospace; margin-top:6px; }
+  .analysis-section { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:16px 20px; margin-bottom:12px; }
+  .analysis-section-title { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:10px; }
+  .analysis-list { list-style:none; }
+  .analysis-list li { font-size:13px; color:var(--text-dim); padding:4px 0 4px 14px; position:relative; }
+  .analysis-list li::before { content:'›'; position:absolute; left:0; color:var(--amber); }
+  .hook-iteration { background:var(--navy); border:1px solid var(--border); border-radius:4px; padding:10px 14px; margin-bottom:8px; font-size:13px; color:var(--text-dim); display:flex; align-items:flex-start; gap:10px; }
+  .hook-iter-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); min-width:20px; margin-top:2px; }
+  .ingest-card { background:var(--navy); border:1px solid var(--border); border-radius:4px; padding:12px 14px; font-family:'DM Mono',monospace; font-size:12px; color:var(--green); display:flex; align-items:center; gap:10px; margin-top:8px; }
+  .ingest-cmd { flex:1; word-break:break-all; }
+  .copy-btn { font-family:'DM Mono',monospace; font-size:10px; padding:4px 10px; border:1px solid rgba(58,170,110,.3); border-radius:3px; background:rgba(58,170,110,.1); color:var(--green); cursor:pointer; transition:all .15s; white-space:nowrap; }
+  .copy-btn:hover { background:rgba(58,170,110,.2); }
+  .copy-btn.copied { color:var(--amber); border-color:var(--border-amber); background:var(--amber-glow); }
+
+  /* ── CONTENT */
+  .niche-toggle { display:inline-flex; background:var(--navy-mid); border:1px solid var(--border); border-radius:4px; overflow:hidden; margin-bottom:24px; }
+  .niche-btn { font-family:'DM Mono',monospace; font-size:11px; text-transform:uppercase; letter-spacing:.06em; padding:8px 16px; border:none; background:transparent; color:var(--text-muted); cursor:pointer; transition:all .15s; }
+  .niche-btn:hover { color:var(--text-dim); }
+  .niche-btn.active { background:var(--amber-glow); color:var(--amber); }
+  .content-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .content-col-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.1em; margin-bottom:12px; }
+  .idea-card { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:14px 16px; margin-bottom:10px; transition:border-color .15s; }
+  .idea-card:hover { border-color:var(--border-amber); }
+  .idea-hook { font-size:13px; font-weight:600; color:var(--text); margin-bottom:6px; line-height:1.4; }
+  .idea-desc { font-size:12px; color:var(--text-dim); margin-bottom:8px; line-height:1.5; }
+  .idea-tag { font-family:'DM Mono',monospace; font-size:10px; padding:2px 7px; border-radius:3px; text-transform:uppercase; letter-spacing:.05em; }
+  .tag-credibility  { background:rgba(58,143,170,.15); color:var(--blue);    border:1px solid rgba(58,143,170,.3); }
+  .tag-pain         { background:rgba(217,95,59,.15);  color:var(--coral);   border:1px solid rgba(217,95,59,.3); }
+  .tag-curiosity    { background:var(--amber-glow);    color:var(--amber);   border:1px solid var(--border-amber); }
+  .tag-story        { background:rgba(58,170,110,.10); color:var(--green);   border:1px solid rgba(58,170,110,.25); }
+  .tag-results      { background:rgba(58,170,110,.15); color:#5cd98a;        border:1px solid rgba(58,170,110,.3); }
+  .tag-tutorial     { background:rgba(74,90,110,.3);   color:var(--text-dim);border:1px solid rgba(74,90,110,.4); }
+  .tag-provocation  { background:rgba(217,95,59,.2);   color:#e8806a;        border:1px solid rgba(217,95,59,.35); }
+  .tag-fomo         { background:rgba(232,160,32,.2);  color:#f0b840;        border:1px solid rgba(232,160,32,.4); }
+  .tag-insight      { background:rgba(58,143,170,.2);  color:#5cc0d9;        border:1px solid rgba(58,143,170,.35); }
+  .tag-value        { background:rgba(58,170,110,.12); color:#4dc88a;        border:1px solid rgba(58,170,110,.28); }
+  .tag-nostalgia    { background:rgba(160,108,16,.2);  color:#d4952a;        border:1px solid rgba(160,108,16,.35); }
+  .tag-authenticity { background:rgba(74,90,110,.35);  color:var(--text-dim);border:1px solid rgba(74,90,110,.5); }
+  .hook-row { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:12px 14px; margin-bottom:8px; display:flex; align-items:flex-start; gap:10px; transition:border-color .15s; }
+  .hook-row:hover { border-color:var(--border-amber); }
+  .hook-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); min-width:18px; margin-top:2px; }
+  .hook-content { flex:1; }
+  .hook-text { font-size:13px; color:var(--text-dim); margin-bottom:6px; line-height:1.4; }
+  .hook-copy-btn { font-family:'DM Mono',monospace; font-size:10px; padding:3px 8px; border:1px solid var(--border); border-radius:3px; background:transparent; color:var(--text-muted); cursor:pointer; transition:all .15s; white-space:nowrap; flex-shrink:0; }
+  .hook-copy-btn:hover { border-color:var(--border-amber); color:var(--amber); }
+  .hook-copy-btn.copied { border-color:var(--green); color:var(--green); }
+
+  /* ── WORKFLOWS */
+  .workflow-stats { display:flex; gap:12px; margin-bottom:24px; align-items:center; }
+  .wf-stat { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:12px 20px; display:flex; align-items:center; gap:10px; }
+  .wf-stat-dot { width:8px; height:8px; border-radius:50%; }
+  .wf-stat-val { font-family:'Barlow Condensed',sans-serif; font-size:22px; font-weight:700; color:var(--text); }
+  .wf-stat-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.07em; }
+  .wf-open-btn { margin-left:auto; background:var(--navy-mid); border:1px solid var(--border-amber); color:var(--amber); font-family:'DM Mono',monospace; font-size:11px; padding:8px 16px; border-radius:4px; cursor:pointer; text-decoration:none; display:inline-flex; align-items:center; gap:6px; transition:background .15s; }
+  .wf-open-btn:hover { background:var(--amber-glow); }
+  .workflow-card { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:16px 20px; margin-bottom:10px; display:flex; align-items:center; gap:16px; }
+  .wf-dot { width:8px; height:8px; border-radius:50%; background:var(--green); flex-shrink:0; animation:pulse 2s infinite; }
+  .wf-info { flex:1; }
+  .wf-name { font-size:14px; font-weight:600; color:var(--text); margin-bottom:3px; }
+  .wf-desc { font-size:12px; color:var(--text-muted); }
+  .wf-times { text-align:right; }
+  .wf-last { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); margin-bottom:3px; }
+  .wf-next { font-family:'DM Mono',monospace; font-size:10px; color:var(--amber); }
+  .wf-status-tag { font-family:'DM Mono',monospace; font-size:10px; padding:2px 8px; border-radius:3px; text-transform:uppercase; letter-spacing:.05em; background:rgba(58,170,110,.15); color:var(--green); border:1px solid rgba(58,170,110,.3); white-space:nowrap; align-self:flex-start; }
+
+  /* ── COLD CALL */
+  .cc-layout { display:grid; grid-template-columns:180px 1fr; gap:20px; }
+  .cc-nav { display:flex; flex-direction:column; gap:4px; }
+  .cc-nav-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); letter-spacing:.1em; text-transform:uppercase; padding:12px 0 6px; }
+  .cc-nav-label:first-child { padding-top:0; }
+  .cc-nav-item { display:flex; align-items:center; gap:8px; padding:9px 12px; cursor:pointer; border-left:2px solid transparent; font-size:12px; color:var(--text-dim); font-weight:500; border-radius:0 4px 4px 0; transition:all .15s; user-select:none; }
+  .cc-nav-item:hover { background:rgba(255,255,255,.03); color:var(--text); }
+  .cc-nav-item.active { border-left-color:var(--amber); background:var(--amber-glow); color:var(--amber); }
+  .cc-nav-num { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); min-width:14px; }
+  .cc-nav-item.active .cc-nav-num { color:var(--amber-dim); }
+  .cc-phase { display:none; animation:fadeIn .18s ease; }
+  .cc-phase.visible { display:block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+  .cc-phase-header { margin-bottom:20px; padding-bottom:14px; border-bottom:1px solid var(--border); }
+  .cc-eyebrow { font-family:'DM Mono',monospace; font-size:11px; color:var(--amber); letter-spacing:.1em; text-transform:uppercase; margin-bottom:4px; }
+  .cc-phase-title { font-family:'Barlow Condensed',sans-serif; font-size:24px; font-weight:700; color:var(--text); }
+  .cc-phase-sub { font-size:13px; color:var(--text-dim); margin-top:3px; }
+  .cc-mission { background:var(--amber-glow); border:1px solid var(--border-amber); border-radius:6px; padding:12px 18px; margin-bottom:20px; display:flex; align-items:center; gap:12px; }
+  .cc-mission-icon { font-size:18px; }
+  .cc-mission-text { font-size:13px; color:var(--amber); font-weight:600; line-height:1.5; }
+  .cc-mission-sub { font-size:12px; color:var(--text-dim); font-weight:400; }
+  .cc-card { background:var(--navy-light); border:1px solid var(--border); border-radius:6px; padding:14px 18px; margin-bottom:10px; }
+  .cc-card.amber { border-color:var(--border-amber); background:linear-gradient(135deg,var(--navy-light),rgba(232,160,32,.04)); }
+  .cc-card.green { border-color:rgba(58,170,110,.3); background:rgba(58,170,110,.05); }
+  .cc-card-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
+  .cc-card.amber .cc-card-label { color:var(--amber-dim); }
+  .cc-card.green .cc-card-label { color:#2a7a50; }
+  .cc-card-text { font-size:13px; line-height:1.7; color:var(--text); }
+  .cc-card-note { font-size:12px; color:var(--text-dim); margin-top:8px; padding-top:8px; border-top:1px solid var(--border); font-style:italic; }
+  .cc-q-list { display:flex; flex-direction:column; gap:8px; }
+  .cc-q-item { background:var(--navy-light); border:1px solid var(--border); border-radius:6px; padding:12px 16px; display:grid; grid-template-columns:24px 1fr; gap:10px; align-items:start; }
+  .cc-q-item.key { border-color:var(--border-amber); }
+  .cc-q-num { font-family:'DM Mono',monospace; font-size:13px; font-weight:500; color:var(--amber); line-height:1.7; }
+  .cc-q-text { font-size:13px; color:var(--text); line-height:1.7; }
+  .cc-q-hint { font-size:12px; color:var(--text-dim); margin-top:4px; }
+  .cc-q-hint.amber { color:var(--amber-dim); }
+  .cc-obj-wrap { display:grid; grid-template-columns:190px 1fr; gap:12px; align-items:start; }
+  .cc-obj-list { display:flex; flex-direction:column; gap:4px; }
+  .cc-obj-btn { text-align:left; background:var(--navy-light); border:1px solid var(--border); border-radius:6px; padding:9px 12px; cursor:pointer; font-family:'Barlow',sans-serif; font-size:11px; font-weight:500; color:var(--text-dim); transition:all .15s; line-height:1.4; }
+  .cc-obj-btn:hover { color:var(--text); border-color:rgba(255,255,255,.14); }
+  .cc-obj-btn.active { border-color:var(--coral); color:var(--coral); background:rgba(217,95,59,.08); }
+  .cc-obj-panel { display:none; }
+  .cc-obj-panel.visible { display:block; }
+  .cc-obj-trigger { font-size:12px; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:10px; padding-bottom:10px; border-bottom:1px solid var(--border); font-style:italic; line-height:1.6; }
+  .cc-close-grid { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .cc-close-step { font-family:'DM Mono',monospace; font-size:10px; color:var(--green); letter-spacing:.08em; text-transform:uppercase; margin-bottom:6px; }
+  .cc-full { grid-column:1 / -1; }
+  .cc-goal-badge { font-size:11px; color:var(--amber); font-family:'DM Mono',monospace; background:var(--amber-glow); border:1px solid var(--border-amber); padding:3px 10px; border-radius:3px; display:inline-block; margin-bottom:16px; }
+
+  /* ── DASHBOARD */
+  .dash-grid { display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .dash-card { background:var(--navy-mid); border:1px solid var(--border); border-radius:6px; padding:20px 24px; }
+  .dash-card.full { grid-column:1 / -1; }
+  .dash-card-title { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:14px; }
+  .dash-funnel-row { display:flex; align-items:center; gap:12px; margin-bottom:8px; }
+  .dash-funnel-label { font-size:12px; color:var(--text-dim); min-width:90px; text-align:right; }
+  .dash-funnel-bar-wrap { flex:1; height:22px; background:var(--navy-light); border-radius:3px; overflow:hidden; position:relative; }
+  .dash-funnel-bar { height:100%; border-radius:3px; transition:width .4s ease; min-width:2px; }
+  .dash-funnel-count { position:absolute; right:8px; top:50%; transform:translateY(-50%); font-family:'DM Mono',monospace; font-size:10px; color:var(--text); }
+  .dash-call-row { display:flex; align-items:center; gap:12px; padding:8px 0; border-bottom:1px solid var(--border); }
+  .dash-call-row:last-child { border-bottom:none; }
+  .dash-call-name { font-size:13px; color:var(--text); font-weight:500; flex:1; }
+  .dash-call-company { font-size:11px; color:var(--text-muted); }
+  .dash-call-phone { font-family:'DM Mono',monospace; font-size:11px; color:var(--text-dim); }
+  .dash-call-btn { font-family:'DM Mono',monospace; font-size:10px; padding:3px 8px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all .15s; }
+  .dash-call-btn:hover { border-color:var(--border-amber); color:var(--amber); }
+  .dash-view-all { display:block; text-align:center; font-family:'DM Mono',monospace; font-size:11px; color:var(--amber); cursor:pointer; padding:10px 0 0; text-decoration:none; }
+  .dash-view-all:hover { text-decoration:underline; }
+  .dash-activity-item { display:flex; align-items:flex-start; gap:10px; padding:7px 0; border-bottom:1px solid var(--border); }
+  .dash-activity-item:last-child { border-bottom:none; }
+  .dash-activity-dot { width:6px; height:6px; border-radius:50%; background:var(--amber); margin-top:5px; flex-shrink:0; }
+  .dash-activity-text { font-size:12px; color:var(--text-dim); flex:1; line-height:1.4; }
+  .dash-activity-time { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); white-space:nowrap; }
+  .dash-overdue { color:var(--coral); }
+  .dash-empty { font-size:12px; color:var(--text-muted); font-style:italic; padding:12px 0; }
+
+  /* ── CRM ENHANCEMENTS */
+  .panel-header-row { display:flex; align-items:center; gap:12px; margin-bottom:4px; }
+  .panel-header-row .panel-title { margin-bottom:0; }
+  .panel-header-btns { margin-left:auto; display:flex; gap:8px; }
+  .btn-sm { font-family:'DM Mono',monospace; font-size:10px; padding:5px 12px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all .15s; text-transform:uppercase; letter-spacing:.05em; }
+  .btn-sm:hover { border-color:var(--border-amber); color:var(--amber); }
+  .btn-sm.primary { background:var(--amber); color:var(--navy); border-color:var(--amber); }
+  .btn-sm.primary:hover { opacity:.85; }
+  th.sortable { cursor:pointer; user-select:none; position:relative; }
+  th.sortable:hover { color:var(--text-dim); }
+  th.sortable .sort-arrow { margin-left:4px; font-size:9px; }
+  .td-checkbox { width:32px; text-align:center; }
+  .td-checkbox input { accent-color:var(--amber); cursor:pointer; }
+  .quick-btn { font-family:'DM Mono',monospace; font-size:9px; padding:2px 6px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; transition:all .15s; }
+  .quick-btn:hover { border-color:var(--border-amber); color:var(--amber); }
+  .bulk-bar { display:none; position:sticky; bottom:0; background:var(--navy-mid); border-top:1px solid var(--border-amber); padding:12px 20px; margin-top:16px; border-radius:6px; align-items:center; gap:12px; z-index:5; }
+  .bulk-bar.visible { display:flex; }
+  .bulk-bar-text { font-family:'DM Mono',monospace; font-size:11px; color:var(--amber); }
+  .bulk-bar select { background:var(--navy); border:1px solid var(--border); color:var(--text-dim); font-family:'DM Mono',monospace; font-size:11px; padding:6px 10px; border-radius:3px; outline:none; }
+  .bulk-bar .btn-sm { margin-left:auto; }
+
+  /* ── DRAWER ENHANCEMENTS */
+  .drawer-outcome-label { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin:16px 0 8px; }
+  .drawer-outcomes { display:flex; flex-wrap:wrap; gap:6px; margin-bottom:16px; }
+  .drawer-outcome-btn { font-family:'DM Mono',monospace; font-size:10px; padding:5px 10px; border-radius:3px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; text-transform:uppercase; letter-spacing:.04em; transition:all .15s; }
+  .drawer-outcome-btn:hover { border-color:var(--blue); color:var(--blue); }
+  .drawer-outcome-btn.logged { border-color:var(--green); color:var(--green); background:rgba(58,170,110,.08); }
+  .drawer-followup-wrap { margin-top:16px; }
+  .drawer-followup-input { background:var(--navy); border:1px solid var(--border); color:var(--text); font-family:'DM Mono',monospace; font-size:12px; padding:8px 12px; border-radius:4px; outline:none; transition:border-color .15s; width:100%; }
+  .drawer-followup-input:focus { border-color:var(--border-amber); }
+  .timeline-wrap { margin-top:16px; max-height:200px; overflow-y:auto; }
+  .timeline-item { display:flex; align-items:flex-start; gap:10px; padding:8px 0 8px 12px; border-left:2px solid var(--border); margin-left:4px; }
+  .timeline-item:first-child { border-left-color:var(--amber); }
+  .timeline-text { font-size:12px; color:var(--text-dim); flex:1; line-height:1.4; }
+  .timeline-time { font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); white-space:nowrap; }
+
+  /* ── MODALS */
+  .modal-overlay { display:none; position:fixed; inset:0; background:rgba(0,0,0,.5); z-index:200; align-items:center; justify-content:center; }
+  .modal-overlay.open { display:flex; }
+  .modal { background:var(--navy-mid); border:1px solid var(--border); border-radius:8px; padding:28px; width:420px; max-width:90vw; max-height:90vh; overflow-y:auto; }
+  .modal-title { font-family:'Barlow Condensed',sans-serif; font-size:20px; font-weight:700; color:var(--text); margin-bottom:4px; }
+  .modal-sub { font-size:12px; color:var(--text-muted); font-family:'DM Mono',monospace; margin-bottom:20px; }
+  .modal-field { margin-bottom:14px; }
+  .modal-field label { display:block; font-family:'DM Mono',monospace; font-size:10px; color:var(--text-muted); text-transform:uppercase; letter-spacing:.08em; margin-bottom:4px; }
+  .modal-field input { width:100%; background:var(--navy); border:1px solid var(--border); color:var(--text); font-family:'Barlow',sans-serif; font-size:13px; padding:8px 12px; border-radius:4px; outline:none; transition:border-color .15s; }
+  .modal-field input:focus { border-color:var(--border-amber); }
+  .modal-actions { display:flex; gap:10px; justify-content:flex-end; margin-top:20px; }
+  .modal-cancel { font-family:'DM Mono',monospace; font-size:11px; padding:8px 16px; border-radius:4px; border:1px solid var(--border); background:transparent; color:var(--text-muted); cursor:pointer; }
+  .modal-cancel:hover { color:var(--text-dim); }
+
+  /* ── NAV BADGE */
+  .nav-badge { font-family:'DM Mono',monospace; font-size:9px; background:var(--amber-glow); color:var(--amber); border:1px solid var(--border-amber); padding:1px 6px; border-radius:10px; margin-left:auto; }
+
+  /* ── MISC */
+  .loading-state { padding:40px; text-align:center; color:var(--text-muted); font-family:'DM Mono',monospace; font-size:12px; }
+  ::-webkit-scrollbar { width:5px; }
+  ::-webkit-scrollbar-track { background:transparent; }
+  ::-webkit-scrollbar-thumb { background:var(--text-muted); border-radius:2px; }
+</style>
+</head>
+<body>
+
+<!-- HEADER -->
+<header>
+  <span class="logo">Work Floor</span>
+  <span class="header-tag">COMMAND CENTER</span>
+  <div class="header-right">
+    <span class="header-date" id="header-date"></span>
+    <div class="status-dot"></div>
+  </div>
+</header>
+
+<!-- SIDEBAR -->
+<nav>
+  <div class="nav-section-label">Overview</div>
+  <div class="nav-item active" data-panel="dashboard"><span class="nav-num">00</span>Dashboard</div>
+
+  <div class="nav-section-label">Outreach</div>
+  <div class="nav-item" data-panel="crm"><span class="nav-num">01</span>CRM / Leads<span class="nav-badge" id="nav-badge-crm"></span></div>
+
+  <div class="nav-section-label">Social</div>
+  <div class="nav-item" data-panel="ig-hub"><span class="nav-num">02</span>Instagram</div>
+
+  <div class="nav-section-label">Automation</div>
+  <div class="nav-item" data-panel="workflows"><span class="nav-num">03</span>Workflows</div>
+
+  <div class="nav-section-label">Sales</div>
+  <div class="nav-item" data-panel="cold-call"><span class="nav-num">04</span>Cold Call Script</div>
+
+  <div class="nav-spacer"></div>
+  <div class="nav-footer">
+    <a href="http://localhost:5678" target="_blank">⚡ Open n8n</a>
+    <a href="#" onclick="openBackupModal();return false" style="margin-top:8px">⚙ Backup / Restore</a>
+  </div>
+</nav>
+
+<!-- MAIN -->
+<main>
+
+  <!-- ── 00 DASHBOARD -->
+  <div class="panel active" id="panel-dashboard">
+    <div class="panel-header">
+      <div class="panel-title">Dashboard</div>
+      <div class="panel-sub">Pipeline overview · today's calls · recent activity</div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-cell"><span class="stat-val" id="d-total">—</span><span class="stat-label">Total Leads</span></div>
+      <div class="stat-cell"><span class="stat-val" id="d-phone">—</span><span class="stat-label">With Phone</span></div>
+      <div class="stat-cell"><span class="stat-val" id="d-conversion">—</span><span class="stat-label">Conversion</span></div>
+      <div class="stat-cell"><span class="stat-val" id="d-overdue">—</span><span class="stat-label">Overdue</span></div>
+    </div>
+    <div class="dash-grid">
+      <div class="dash-card">
+        <div class="dash-card-title">Pipeline Funnel</div>
+        <div id="dash-funnel"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Today's Call List (top 15)</div>
+        <div id="dash-calls"></div>
+        <a class="dash-view-all" data-goto-filter="calls">View all in CRM →</a>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Overdue Follow-ups</div>
+        <div id="dash-overdue"></div>
+      </div>
+      <div class="dash-card">
+        <div class="dash-card-title">Recent Activity</div>
+        <div id="dash-activity"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 01 CRM -->
+  <div class="panel" id="panel-crm">
+    <div class="panel-header">
+      <div class="panel-header-row">
+        <div class="panel-title">CRM / Leads</div>
+        <div class="panel-header-btns">
+          <button class="btn-sm" onclick="openImportModal()">+ Add Lead</button>
+          <button class="btn-sm" onclick="exportCSV()">Export CSV</button>
+        </div>
+      </div>
+      <div class="panel-sub">Supabase · HVAC pipeline</div>
+    </div>
+    <div class="stats-bar">
+      <div class="stat-cell"><span class="stat-val" id="s-total">—</span><span class="stat-label">Total</span></div>
+      <div class="stat-cell"><span class="stat-val" id="s-phone">—</span><span class="stat-label">With Phone</span></div>
+      <div class="stat-cell"><span class="stat-val" id="s-email">—</span><span class="stat-label">With Email</span></div>
+      <div class="stat-cell"><span class="stat-val" id="s-called">—</span><span class="stat-label">Called</span></div>
+      <div class="stat-cell"><span class="stat-val" id="s-interested">—</span><span class="stat-label">Interested</span></div>
+      <div class="stat-cell"><span class="stat-val" id="s-demo">—</span><span class="stat-label">Demo Booked</span></div>
+      <div class="stat-cell"><span class="stat-val" id="s-won">—</span><span class="stat-label">Closed Won</span></div>
+    </div>
+    <div class="filters">
+      <input type="text" class="filter-input" id="crm-search" placeholder="Search name, company, location…">
+      <select class="filter-select" id="crm-stage-filter">
+        <option value="">All Stages</option>
+        <option>Cold</option><option>Called</option><option>Interested</option>
+        <option>Demo Booked</option><option>Closed Won</option><option>Closed Lost</option>
+        <option value="__followup__">Needs Follow-up</option>
+      </select>
+      <select class="filter-select" id="crm-loc-filter"><option value="">All Locations</option></select>
+    </div>
+    <div class="table-wrap">
+      <table>
+        <thead><tr>
+          <th class="td-checkbox"><input type="checkbox" id="crm-select-all"></th>
+          <th class="sortable" data-sort="name">Name / Company <span class="sort-arrow"></span></th>
+          <th class="sortable" data-sort="location">Location <span class="sort-arrow"></span></th>
+          <th>Phone</th><th>Email</th>
+          <th class="sortable" data-sort="stage">Stage <span class="sort-arrow"></span></th>
+          <th>Actions</th>
+        </tr></thead>
+        <tbody id="crm-tbody"><tr><td colspan="7" class="loading-state">Loading leads…</td></tr></tbody>
+      </table>
+    </div>
+    <div class="bulk-bar" id="bulk-bar">
+      <span class="bulk-bar-text" id="bulk-bar-text">0 selected</span>
+      <span style="font-size:11px;color:var(--text-muted)">Move to:</span>
+      <select id="bulk-stage-select">
+        <option value="">Select stage…</option>
+        <option>Cold</option><option>Called</option><option>Interested</option>
+        <option>Demo Booked</option><option>Closed Won</option><option>Closed Lost</option>
+      </select>
+      <button class="btn-sm primary" onclick="applyBulkStage()">Apply</button>
+    </div>
+  </div>
+
+  <!-- ── 02 INSTAGRAM HUB -->
+  <div class="panel" id="panel-ig-hub">
+    <div class="panel-header">
+      <div class="panel-title">Instagram</div>
+      <div class="panel-sub">Select a section to get started</div>
+    </div>
+    <div class="hub-grid">
+      <div class="hub-card">
+        <div class="hub-card-icon">📊</div>
+        <div class="hub-card-title">Analytics</div>
+        <div class="hub-card-desc">Follower growth, engagement rate, reach, saves, and top-performing posts. Connect your Instagram account to unlock live data.</div>
+        <button class="hub-card-btn" data-goto="ig-analytics">View →</button>
+      </div>
+      <div class="hub-card">
+        <div class="hub-card-icon">🎬</div>
+        <div class="hub-card-title">Reel Analyzer</div>
+        <div class="hub-card-desc">Drop a reel file or paste a transcript. Get a hook score, what's working, what to improve, and 5 hook rewrites. Copy a Claude prompt with one click.</div>
+        <button class="hub-card-btn" data-goto="reels">View →</button>
+      </div>
+      <div class="hub-card">
+        <div class="hub-card-icon">💡</div>
+        <div class="hub-card-title">Ideas & Hooks</div>
+        <div class="hub-card-desc">Reel ideas and a hook swipe file for HVAC Agency and Personal Brand niches. Filter by niche, copy any hook instantly.</div>
+        <button class="hub-card-btn" data-goto="content">View →</button>
+      </div>
+      <div class="hub-card">
+        <div class="hub-card-icon">📅</div>
+        <div class="hub-card-title">Post Planner</div>
+        <div class="hub-card-desc">Schedule and plan your content calendar. Drag and drop ideas onto dates. Coming soon — connect Instagram API to push directly.</div>
+        <button class="hub-card-btn" data-goto="ig-planner">View →</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 02a INSTAGRAM ANALYTICS -->
+  <div class="panel" id="panel-ig-analytics">
+    <div class="breadcrumb">
+      <span class="breadcrumb-back" data-goto="ig-hub">← Instagram</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">Analytics</span>
+    </div>
+    <div class="panel-header">
+      <div class="panel-title">Analytics</div>
+      <div class="panel-sub">Follower growth · engagement · reach · saves</div>
+    </div>
+    <div class="ig-connect-banner">
+      <span class="ig-connect-icon">📸</span>
+      <div class="ig-connect-text">
+        <strong>Connect your Instagram account</strong>
+        <span>Requires Instagram Basic Display API — placeholder for v1</span>
+      </div>
+      <button class="ig-connect-btn">Connect</button>
+    </div>
+    <div class="stats-cards">
+      <div class="stat-card"><div class="stat-card-val">—</div><div class="stat-card-label">Followers</div></div>
+      <div class="stat-card"><div class="stat-card-val">—</div><div class="stat-card-label">Avg Engagement</div></div>
+      <div class="stat-card"><div class="stat-card-val">—</div><div class="stat-card-label">Avg Saves</div></div>
+    </div>
+    <div class="section-label">Recent Posts</div>
+    <div class="posts-grid">
+      <div class="post-card"><span class="post-emoji">🤖</span><span class="post-likes">— likes</span></div>
+      <div class="post-card"><span class="post-emoji">🔧</span><span class="post-likes">— likes</span></div>
+      <div class="post-card"><span class="post-emoji">📊</span><span class="post-likes">— likes</span></div>
+      <div class="post-card"><span class="post-emoji">💰</span><span class="post-likes">— likes</span></div>
+    </div>
+    <div class="section-label">Top Performing Content</div>
+    <div class="empty-state"><div class="empty-state-icon">📈</div>Connect Instagram to see top performing content</div>
+  </div>
+
+  <!-- ── 02b REEL ANALYZER -->
+  <div class="panel" id="panel-reels">
+    <div class="breadcrumb">
+      <span class="breadcrumb-back" data-goto="ig-hub">← Instagram</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">Reel Analyzer</span>
+    </div>
+    <div class="panel-header">
+      <div class="panel-title">Reel Analyzer</div>
+      <div class="panel-sub">Hook scoring · Claude prompt generator · ingest command</div>
+    </div>
+    <div class="drop-zone" id="drop-zone">
+      <input type="file" id="reel-file-input" accept=".mp4,.mov,.hevc,.m4v">
+      <div class="drop-zone-icon">🎬</div>
+      <div class="drop-zone-text" id="drop-zone-text">Drop your reel here</div>
+      <div class="drop-zone-sub">Accepts <span>.mp4</span> · <span>.mov</span> · <span>.hevc</span> · <span>.m4v</span></div>
+    </div>
+    <div class="or-divider">— or —</div>
+    <textarea class="reel-textarea" id="reel-transcript" placeholder="Paste transcript, script, or reel description here…"></textarea>
+    <button class="btn-primary" id="analyze-btn">Analyze Reel</button>
+    <div class="analysis-output" id="analysis-output">
+      <div style="height:20px"></div>
+      <div class="hook-score-block">
+        <div class="hook-score-num" id="hook-score-num">—</div>
+        <div class="hook-score-bar-wrap">
+          <div class="hook-score-label">Hook Score</div>
+          <div class="hook-score-bar"><div class="hook-score-fill" id="hook-score-fill" style="width:0%"></div></div>
+          <div class="hook-score-verdict" id="hook-score-verdict"></div>
+        </div>
+      </div>
+      <div class="analysis-section">
+        <div class="analysis-section-title">What's Working</div>
+        <ul class="analysis-list" id="analysis-working"></ul>
+      </div>
+      <div class="analysis-section">
+        <div class="analysis-section-title">What to Improve</div>
+        <ul class="analysis-list" id="analysis-improve"></ul>
+      </div>
+      <div class="analysis-section">
+        <div class="analysis-section-title">Hook Iterations</div>
+        <div id="analysis-hooks"></div>
+      </div>
+      <div style="margin-top:16px">
+        <div class="section-label">Ingest Command</div>
+        <div class="ingest-card">
+          <span class="ingest-cmd" id="ingest-cmd-text"></span>
+          <button class="copy-btn" id="ingest-copy-btn">COPY</button>
+        </div>
+        <div style="margin-top:10px">
+          <button class="btn-secondary" id="copy-prompt-btn">Copy Claude Prompt</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 02c IDEAS & HOOKS -->
+  <div class="panel" id="panel-content">
+    <div class="breadcrumb">
+      <span class="breadcrumb-back" data-goto="ig-hub">← Instagram</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">Ideas & Hooks</span>
+    </div>
+    <div class="panel-header">
+      <div class="panel-title">Ideas & Hooks</div>
+      <div class="panel-sub">Reel ideas and hook swipe file by niche</div>
+    </div>
+    <div class="niche-toggle">
+      <button class="niche-btn active" data-niche="hvac">HVAC Agency</button>
+      <button class="niche-btn" data-niche="personal">Personal Brand</button>
+      <button class="niche-btn" data-niche="both">Both</button>
+    </div>
+    <div class="content-grid">
+      <div><div class="content-col-label">Reel Ideas</div><div id="ideas-list"></div></div>
+      <div><div class="content-col-label">Hook Swipe File</div><div id="hooks-list"></div></div>
+    </div>
+  </div>
+
+  <!-- ── 02d POST PLANNER (placeholder) -->
+  <div class="panel" id="panel-ig-planner">
+    <div class="breadcrumb">
+      <span class="breadcrumb-back" data-goto="ig-hub">← Instagram</span>
+      <span class="breadcrumb-sep">/</span>
+      <span class="breadcrumb-current">Post Planner</span>
+    </div>
+    <div class="panel-header">
+      <div class="panel-title">Post Planner</div>
+      <div class="panel-sub">Content calendar · scheduling · publishing</div>
+    </div>
+    <div class="empty-state" style="margin-top:8px">
+      <div class="empty-state-icon">📅</div>
+      Post Planner coming in v2 — connect Instagram API to enable scheduling
+    </div>
+  </div>
+
+  <!-- ── 04 COLD CALL SCRIPT -->
+  <div class="panel" id="panel-cold-call">
+    <div class="panel-header">
+      <div class="panel-title">Cold Call Script</div>
+      <div class="panel-sub">5-phase cheat sheet · objection handling · booking close</div>
+    </div>
+    <div class="cc-goal-badge">GOAL: Book the discovery call</div>
+    <div class="cc-layout">
+      <div class="cc-nav">
+        <div class="cc-nav-label">Script</div>
+        <div class="cc-nav-item active" data-cc="opener"><span class="cc-nav-num">01</span>Opener</div>
+        <div class="cc-nav-item" data-cc="discovery"><span class="cc-nav-num">02</span>Surface Pain</div>
+        <div class="cc-nav-item" data-cc="hook"><span class="cc-nav-num">03</span>The Hook</div>
+        <div class="cc-nav-label">Pushback</div>
+        <div class="cc-nav-item" data-cc="objections"><span class="cc-nav-num">04</span>Objections</div>
+        <div class="cc-nav-label">Finish</div>
+        <div class="cc-nav-item" data-cc="close"><span class="cc-nav-num">05</span>Book the Call</div>
+      </div>
+      <div class="cc-content">
+
+        <!-- OPENER -->
+        <div class="cc-phase visible" id="cc-opener">
+          <div class="cc-phase-header">
+            <div class="cc-eyebrow">Phase 01 — first 30 seconds</div>
+            <div class="cc-phase-title">The Opener</div>
+            <div class="cc-phase-sub">You are not pitching anything yet. You are earning 2 minutes.</div>
+          </div>
+          <div class="cc-mission">
+            <div class="cc-mission-icon">🎯</div>
+            <div>
+              <div class="cc-mission-text">The only goal of this call is to book a discovery call.</div>
+              <div class="cc-mission-sub">You don't know their bottleneck yet. Don't pretend you do. Don't sell agents. Don't explain AI. Just get 30 minutes on the calendar.</div>
+            </div>
+          </div>
+          <div class="cc-card amber">
+            <div class="cc-card-label">Opening line</div>
+            <div class="cc-card-text">"Hey [Name], this is [Your Name] from Work Floor. We help HVAC businesses implement AI into their operations — not generic software, custom-built systems specific to how your business runs. Quick question before I say anything else: what's the one thing in your business right now that's either costing you the most time or the most money?"</div>
+            <div class="cc-card-note">Stop talking. Let them answer. That answer is your entire pitch.</div>
+          </div>
+          <div class="cc-card">
+            <div class="cc-card-label">If they ask "what do you actually do?"</div>
+            <div class="cc-card-text">"We get on a discovery call with HVAC business owners, figure out exactly where they're losing time or money — whether that's leads, dispatch, follow-up, reporting, whatever — and then we custom-build autonomous AI agents that handle those problems. The system grows with the business. As AI improves, we upgrade it. You're not buying software. You're getting a partner."</div>
+          </div>
+          <div class="cc-card">
+            <div class="cc-card-label">If they push back immediately — "not interested"</div>
+            <div class="cc-card-text">"Totally fair. One question before I let you go — are you running at full capacity right now, or is there somewhere in the business you feel like you're leaving money on the table?"</div>
+            <div class="cc-card-note">Most owners will hesitate. That hesitation is your opening.</div>
+          </div>
+        </div>
+
+        <!-- SURFACE PAIN -->
+        <div class="cc-phase" id="cc-discovery">
+          <div class="cc-phase-header">
+            <div class="cc-eyebrow">Phase 02 — find the crack</div>
+            <div class="cc-phase-title">Surface the Pain</div>
+            <div class="cc-phase-sub">You're not diagnosing yet — that's the discovery call. You just need them to feel the problem.</div>
+          </div>
+          <div class="cc-q-list">
+            <div class="cc-q-item">
+              <div class="cc-q-num">Q1</div>
+              <div>
+                <div class="cc-q-text">"When a lead comes in after hours — what actually happens to it?"</div>
+                <div class="cc-q-hint">→ Most say "honestly, not much." That's your hook.</div>
+              </div>
+            </div>
+            <div class="cc-q-item">
+              <div class="cc-q-num">Q2</div>
+              <div>
+                <div class="cc-q-text">"How much time does your team spend on stuff that feels repetitive — scheduling, follow-ups, reporting?"</div>
+                <div class="cc-q-hint">→ Listen for frustration. Don't jump in. Let it build.</div>
+              </div>
+            </div>
+            <div class="cc-q-item">
+              <div class="cc-q-num">Q3</div>
+              <div>
+                <div class="cc-q-text">"When you look at your numbers at the end of the month — do you feel like you have a clear picture of where revenue is coming from and where it's leaking?"</div>
+                <div class="cc-q-hint">→ Most owners don't. Visibility is a universal pain.</div>
+              </div>
+            </div>
+            <div class="cc-q-item">
+              <div class="cc-q-num">Q4</div>
+              <div>
+                <div class="cc-q-text">"What does your business look like in two years if nothing changes?"</div>
+                <div class="cc-q-hint">→ This creates forward pressure. They start selling themselves.</div>
+              </div>
+            </div>
+            <div class="cc-q-item key">
+              <div class="cc-q-num" style="color:var(--amber);">Q5</div>
+              <div>
+                <div class="cc-q-text">"If you could fix one thing that's either costing you money or eating your time — what would it be?"</div>
+                <div class="cc-q-hint amber">→ This is the bridge to the hook. Whatever they say, your next line is Phase 3.</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- THE HOOK -->
+        <div class="cc-phase" id="cc-hook">
+          <div class="cc-phase-header">
+            <div class="cc-eyebrow">Phase 03 — one line pivot</div>
+            <div class="cc-phase-title">The Hook</div>
+            <div class="cc-phase-sub">After they name their pain, this is your only pitch. Keep it short.</div>
+          </div>
+          <div class="cc-card amber">
+            <div class="cc-card-label">Universal hook — works for any bottleneck they name</div>
+            <div class="cc-card-text">"That's exactly what we dig into on a discovery call. We don't come in with a pre-built solution — we spend 30 minutes understanding your business specifically, then we build autonomous agents custom to how you operate. Whether it's lead capture, dispatch, reporting, follow-up — the agent retrieves the data, surfaces the insight, and handles the action. You get the ROI without adding headcount.<br><br>I'm not asking you to commit to anything. I just want 30 minutes to see if there's a fit."</div>
+          </div>
+          <div class="cc-card">
+            <div class="cc-card-label">What autonomous agents actually do — if they ask</div>
+            <div class="cc-card-text">"Think of it as an employee that never sleeps. It retrieves information from your systems — job data, customer history, lead activity — brings it together, and takes action based on rules we build together. Books the follow-up. Flags the cancellation. Pulls the weekly revenue report. It's not a chatbot. It's a system that does real operational work inside your business."</div>
+          </div>
+          <div class="cc-card">
+            <div class="cc-card-label">Why us vs. just buying software</div>
+            <div class="cc-card-text">"Software is generic. It's built for everyone, which means it's optimized for no one. What we build is specific to your workflow, your CRM, your team. And as AI keeps improving — and it will — we upgrade your system. You don't have to chase the technology. That's our job."</div>
+          </div>
+          <div class="cc-card green">
+            <div class="cc-card-label">The partnership framing — use this if they ask about pricing</div>
+            <div class="cc-card-text">"We're not a vendor, we're a partner. We don't hand you a product and disappear. We stay in it with you. As your business grows, the agents scale with it. As AI evolves, we implement the better systems. The relationship is built around your ROI, not a subscription renewal."</div>
+          </div>
+        </div>
+
+        <!-- OBJECTIONS -->
+        <div class="cc-phase" id="cc-objections">
+          <div class="cc-phase-header">
+            <div class="cc-eyebrow">Phase 04 — pushback</div>
+            <div class="cc-phase-title">Objection Handling</div>
+            <div class="cc-phase-sub">Click an objection to see the response.</div>
+          </div>
+          <div class="cc-obj-wrap">
+            <div class="cc-obj-list">
+              <button class="cc-obj-btn active" data-obj="software">"We already have software."</button>
+              <button class="cc-obj-btn" data-obj="ai">"We're not into AI."</button>
+              <button class="cc-obj-btn" data-obj="cost">"What does it cost?"</button>
+              <button class="cc-obj-btn" data-obj="think">"I need to think about it."</button>
+              <button class="cc-obj-btn" data-obj="busy">"Bad time, we're slammed."</button>
+              <button class="cc-obj-btn" data-obj="trust">"How do I know it works?"</button>
+              <button class="cc-obj-btn" data-obj="why">"Why HVAC specifically?"</button>
+            </div>
+            <div>
+              <div class="cc-obj-panel visible" id="cc-or-software">
+                <div class="cc-obj-trigger">"We already have software for that."</div>
+                <div class="cc-card-text">"Good — we don't replace it, we sit on top of it. Your CRM, your scheduling tool, your job management platform — we connect to all of it. The agents pull from those systems and take action across them. You keep the tools you know. We add the intelligence layer those tools don't have."</div>
+              </div>
+              <div class="cc-obj-panel" id="cc-or-ai">
+                <div class="cc-obj-trigger">"We're not really into AI / AI doesn't work for us."</div>
+                <div class="cc-card-text">"That's fair — a lot of AI tools are gimmicks. What we build isn't a chatbot or a dashboard feature. It's an autonomous system that does real operational work: retrieves your data, identifies what needs to happen, and acts on it. Your team never has to touch it. You just see the output — filled jobs, recovered leads, clean reports.<br><br>I'm not asking you to trust AI. I'm asking for 30 minutes to show you what it actually does in an HVAC business."</div>
+              </div>
+              <div class="cc-obj-panel" id="cc-or-cost">
+                <div class="cc-obj-trigger">"What does it cost?"</div>
+                <div class="cc-card-text">"That's exactly why we do a discovery call first — the scope determines the price. We build custom, so we don't quote until we understand your business. What I can tell you is that everything we build is tied to a return. If the math doesn't make sense for your operation, we'll tell you on the call. We're not interested in a bad fit."</div>
+              </div>
+              <div class="cc-obj-panel" id="cc-or-think">
+                <div class="cc-obj-trigger">"I need to think about it / talk to my partner."</div>
+                <div class="cc-card-text">"Completely understand. The discovery call is actually the right place to bring your partner — it's not a sales pitch, it's a working session to map your operation. Nothing to decide before that.<br><br>Can we get 30 minutes on the calendar for both of you? I'll send a calendar link right after this call."</div>
+              </div>
+              <div class="cc-obj-panel" id="cc-or-busy">
+                <div class="cc-obj-trigger">"Bad time — we're in the middle of busy season."</div>
+                <div class="cc-card-text">"Honestly, busy season is exactly when the problems are loudest — missed leads, dispatch chaos, techs waiting on information. That's the data we'd use to build the right system.<br><br>I'm not asking for time now. Can we schedule 30 minutes two weeks out when things settle? The conversation will be more valuable with real pain fresh in your mind."</div>
+              </div>
+              <div class="cc-obj-panel" id="cc-or-trust">
+                <div class="cc-obj-trigger">"How do I know this actually works?"</div>
+                <div class="cc-card-text">"You shouldn't take my word for it — that's exactly why we do the discovery call before anything else. We map your specific operation, show you what an agent would do in your workflow, and you can decide if the logic makes sense before we build a single thing.<br><br>You're not buying anything on the call. You're just seeing if it's real."</div>
+              </div>
+              <div class="cc-obj-panel" id="cc-or-why">
+                <div class="cc-obj-trigger">"Why do you focus on HVAC?"</div>
+                <div class="cc-card-text">"HVAC businesses have a specific set of operational patterns — seasonal demand, dispatch complexity, after-hours leads, recurring maintenance — that are highly automatable. We know the workflows, we know the CRMs, and we can move fast because we're not starting from scratch every time.<br><br>It also means we're not a generalist agency pitching you something we've never done before."</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CLOSE -->
+        <div class="cc-phase" id="cc-close">
+          <div class="cc-phase-header">
+            <div class="cc-eyebrow">Phase 05 — the only ask</div>
+            <div class="cc-phase-title">Book the Discovery Call</div>
+            <div class="cc-phase-sub">This is the entire goal. One ask, one close.</div>
+          </div>
+          <div class="cc-close-grid">
+            <div class="cc-card amber cc-full">
+              <div class="cc-card-label">The ask — say this exactly</div>
+              <div class="cc-card-text">"I'd like to get 30 minutes on the calendar with you — no pitch, no commitment. We map your operation, identify the biggest place you're losing time or money, and I'll show you what an autonomous agent would actually do about it. If it doesn't make sense for your business, I'll tell you. What does your schedule look like this week or next?"</div>
+            </div>
+            <div class="cc-card">
+              <div class="cc-close-step">If they say yes</div>
+              <div class="cc-card-text">"Perfect. I'll send you a calendar link right now — takes 10 seconds to book. What email should I send it to?"</div>
+              <div class="cc-card-note">Send it while they're on the phone. Don't wait.</div>
+            </div>
+            <div class="cc-card">
+              <div class="cc-close-step">If they stall</div>
+              <div class="cc-card-text">"Tell you what — I'll send the link now and you can pick a time when it's convenient. No follow-up pressure. A link in their inbox is better than no commitment."</div>
+              <div class="cc-card-note">Lower the friction. A link in their inbox is better than no commitment.</div>
+            </div>
+            <div class="cc-card green cc-full">
+              <div class="cc-card-label">What the discovery call actually is — set this expectation</div>
+              <div class="cc-card-text">"On the call we'll spend 30 minutes on three things: where your business is losing time, where it's losing money, and whether an autonomous agent is the right answer for those specific problems. You'll leave with clarity on your operation even if we never work together."</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ── 03 WORKFLOWS -->
+  <div class="panel" id="panel-workflows">
+    <div class="panel-header">
+      <div class="panel-title">Workflows</div>
+      <div class="panel-sub">n8n automation status · 7 active</div>
+    </div>
+    <div class="workflow-stats">
+      <div class="wf-stat"><div class="wf-stat-dot" style="background:var(--green)"></div><div><div class="wf-stat-val">7</div><div class="wf-stat-label">Active</div></div></div>
+      <div class="wf-stat"><div class="wf-stat-dot" style="background:var(--text-muted)"></div><div><div class="wf-stat-val">0</div><div class="wf-stat-label">Paused</div></div></div>
+      <div class="wf-stat"><div class="wf-stat-dot" style="background:var(--coral)"></div><div><div class="wf-stat-val">0</div><div class="wf-stat-label">Errors</div></div></div>
+      <a class="wf-open-btn" href="http://localhost:5678" target="_blank">⚡ Open n8n</a>
+    </div>
+    <div id="workflow-cards"></div>
+  </div>
+
+
+</main>
+
+<!-- DRAWER -->
+<div class="drawer-overlay" id="drawer-overlay"></div>
+<div class="drawer" id="drawer">
+  <button class="drawer-close" id="drawer-close">✕</button>
+  <div class="drawer-lead-name" id="drawer-name"></div>
+  <div class="drawer-lead-company" id="drawer-company"></div>
+  <div class="drawer-stage-label">Pipeline Stage</div>
+  <div class="drawer-stages" id="drawer-stages"></div>
+  <div class="drawer-outcome-label">Call Outcome</div>
+  <div class="drawer-outcomes" id="drawer-outcomes"></div>
+  <hr class="drawer-divider">
+  <div id="drawer-fields"></div>
+  <hr class="drawer-divider">
+  <div class="drawer-field-label">Notes</div>
+  <textarea class="drawer-notes" id="drawer-notes" placeholder="Add notes…"></textarea>
+  <div class="drawer-followup-wrap">
+    <div class="drawer-field-label">Follow-up Date</div>
+    <input type="date" class="drawer-followup-input" id="drawer-followup">
+  </div>
+  <hr class="drawer-divider">
+  <div class="drawer-field-label">Activity</div>
+  <div class="timeline-wrap" id="drawer-timeline"></div>
+</div>
+
+<!-- IMPORT MODAL -->
+<div class="modal-overlay" id="import-modal">
+  <div class="modal">
+    <div class="modal-title">Add New Lead</div>
+    <div class="modal-sub">Manually add a lead to your pipeline</div>
+    <div class="modal-field"><label>Name</label><input type="text" id="import-name" placeholder="John Smith"></div>
+    <div class="modal-field"><label>Company</label><input type="text" id="import-company" placeholder="Smith HVAC"></div>
+    <div class="modal-field"><label>Phone</label><input type="tel" id="import-phone" placeholder="(555) 123-4567"></div>
+    <div class="modal-field"><label>Email</label><input type="email" id="import-email" placeholder="john@smithhvac.com"></div>
+    <div class="modal-field"><label>Location</label><input type="text" id="import-location" placeholder="Dallas, TX"></div>
+    <div class="modal-field"><label>Title</label><input type="text" id="import-title" placeholder="Owner"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeImportModal()">Cancel</button>
+      <button class="btn-sm primary" onclick="saveNewLead()">Add Lead</button>
+    </div>
+  </div>
+</div>
+
+<!-- BACKUP MODAL -->
+<div class="modal-overlay" id="backup-modal">
+  <div class="modal">
+    <div class="modal-title">Backup / Restore</div>
+    <div class="modal-sub">Export or import your CRM data</div>
+    <div style="display:flex;gap:12px;margin-bottom:20px;">
+      <button class="btn-sm" onclick="exportBackup()" style="flex:1;padding:12px">Export Backup (JSON)</button>
+      <label class="btn-sm" style="flex:1;padding:12px;text-align:center;cursor:pointer">
+        Import Backup
+        <input type="file" id="backup-file-input" accept=".json" style="display:none" onchange="importBackup(event)">
+      </label>
+    </div>
+    <div id="backup-status" style="font-size:12px;color:var(--text-muted);font-family:'DM Mono',monospace;min-height:20px;"></div>
+    <div class="modal-actions">
+      <button class="modal-cancel" onclick="closeBackupModal()">Close</button>
+    </div>
+  </div>
+</div>
+
+<script>
+// ── SUPABASE
+const SB_URL = 'https://ewbokaehhjhouhbanjnr.supabase.co';
+const SB_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImV3Ym9rYWVoaGpob3VoYmFuam5yIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzQ3NjczODIsImV4cCI6MjA5MDM0MzM4Mn0.oIVA8I59aUDmivyDBeWClDzmKEMhL-MJy4edz2u7c38';
+const sb = window.supabase.createClient(SB_URL, SB_KEY);
+
+// ── CONSTANTS
+const STAGES = ['Cold','Called','Interested','Demo Booked','Closed Won','Closed Lost'];
+const STAGE_CLASS = {'Cold':'stage-cold','Called':'stage-called','Interested':'stage-interested','Demo Booked':'stage-demo','Closed Won':'stage-won','Closed Lost':'stage-lost'};
+const STAGE_COLOR = {'Cold':'var(--text-muted)','Called':'var(--blue)','Interested':'var(--amber)','Demo Booked':'var(--green)','Closed Won':'#5cd98a','Closed Lost':'var(--coral)'};
+const POWER_WORDS = ['stop','never','secret','losing','mistake','broke','fired','quit','replace','dead','wrong','warning','urgent','crisis','exposed','shocking','banned','stole','leaked','ruined','destroyed','failed','wasted','danger','trapped','built','replaced','automated','hacked','scaled','doubled','tripled','free','truth'];
+const OUTCOMES = ['No Answer','Voicemail','Callback','Interested','Not Interested'];
+const OUTCOME_STAGE = {'Interested':'Interested','Not Interested':'Closed Lost'};
+
+const WORKFLOWS = [
+  { name:'Instagram Lead Scraper', desc:'Scrapes HVAC companies from Instagram + geo-tags', last:'2026-03-27 02:00', next:'2026-03-28 02:00' },
+  { name:'Lead Research Agent',    desc:'Enriches lead data via Apollo + web scrape',      last:'on trigger',       next:'on trigger'       },
+  { name:'Cold Email Outreach',    desc:'Sends personalized outreach sequences via SMTP',  last:'2026-03-27 09:00', next:'2026-03-28 09:00' },
+  { name:'Airtable Lead Sync',     desc:'Syncs pipeline stage changes to Airtable',        last:'on trigger',       next:'on trigger'       },
+  { name:'Niche Finder Pipeline',  desc:'Scrapes Reddit/FB for HVAC pain-point signals',   last:'2026-03-26 23:00', next:'2026-03-27 23:00' },
+  { name:'Reddit Scraper',         desc:'Pulls HVAC subreddit posts + comments 2x/day',    last:'2026-03-27 12:00', next:'2026-03-27 18:00' },
+  { name:'Dashboard Builder',      desc:'Rebuilds HTML report from Airtable data weekly',  last:'2026-03-24 00:00', next:'2026-03-31 00:00' },
+];
+
+const HVAC_IDEAS = [
+  { hook:'I built a lead machine for an HVAC company in 14 hours.',       desc:'Walk through lead scraping, n8n, CRM, email — soup to nuts.',                         tag:'credibility' },
+  { hook:'HVAC owners are losing $40k/year to this one problem.',         desc:'After-hours leads die unanswered. Show AI voice agent picking up at 2am.',           tag:'pain'        },
+  { hook:"I asked an AI to cold call HVAC owners. Here's what happened.", desc:'Play a real voice agent call recording — reactions, objections, bookings.',          tag:'curiosity'   },
+  { hook:'How a 2-person HVAC company competes with the big guys.',       desc:'AI agents handling dispatch, follow-ups, and after-hours — full ops walkthrough.',   tag:'story'       },
+  { hook:'The HVAC owner who went from 30 leads to 300 in 60 days.',     desc:'Case study with real numbers, before/after, and the exact systems used.',            tag:'results'     },
+  { hook:'What happens when a lead calls an HVAC company after hours.',   desc:'Old way (voicemail/missed call) vs AI agent (instant pickup, booked appointment).', tag:'tutorial'    },
+];
+const HVAC_HOOKS = [
+  { text:'I built this in 14 hours and it replaced a full-time employee.',    tag:'credibility' },
+  { text:'HVAC companies are losing their best leads every single night.',    tag:'pain'        },
+  { text:"Most HVAC owners don't know this is even possible yet.",            tag:'curiosity'   },
+  { text:'I asked an AI to run an entire HVAC operation for a week.',         tag:'curiosity'   },
+  { text:'This one system made an HVAC company $80k in 90 days.',            tag:'results'     },
+  { text:'Stop hiring humans for jobs AI can do at 3am for free.',           tag:'provocation' },
+  { text:"Here's what your competitor's AI system looks like right now.",    tag:'fomo'        },
+  { text:'The HVAC owner who quit cold calling and still booked 40 demos.',  tag:'story'       },
+];
+const PERSONAL_IDEAS = [
+  { hook:"I left [X] to build AI tools. Here's month 3.",          desc:'Raw progress update — revenue, wins, failures, what\'s working.',      tag:'story'    },
+  { hook:"My entire daily workflow runs on AI. Here's the stack.", desc:'Screen record the full workflow — n8n, ingest, CRM, command center.',  tag:'tutorial' },
+  { hook:'I analyzed 50 viral AI reels. Here\'s the pattern.',    desc:'Meta-content breakdown — hooks, formats, lengths, CTAs.',              tag:'insight'  },
+  { hook:"The tool I built that I'll never sell.",                 desc:'Show the command center — CRM, reel analyzer, workflow dashboard.',    tag:'curiosity'},
+  { hook:'How I generate leads without ever cold calling.',        desc:'n8n walkthrough — scraping, enrichment, email sequences, Airtable.',  tag:'tutorial' },
+];
+const PERSONAL_HOOKS = [
+  { text:"I replaced my entire workflow with AI tools. Here's what stayed.", tag:'curiosity'    },
+  { text:'Month 3 of building an AI agency. Real numbers.',                  tag:'authenticity' },
+  { text:'I built a tool in a weekend that saves me 10 hours a week.',       tag:'value'        },
+  { text:'The system I wish I had when I started.',                          tag:'nostalgia'    },
+  { text:"Here's the exact stack I use to run my business solo.",            tag:'tutorial'     },
+];
+
+// ── STATE
+let leadsData = [];
+let contentNiche = 'hvac';
+let currentFileName = '';
+let sortCol = '';
+let sortDir = 'asc';
+let selectedLeads = new Set();
+let currentDrawerLead = null;
+
+// ── UTILS
+function esc(s) {
+  return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+}
+function relativeTime(ts) {
+  const diff = Date.now() - new Date(ts).getTime();
+  const m = Math.floor(diff/60000), h = Math.floor(diff/3600000), d = Math.floor(diff/86400000);
+  if (m < 1) return 'just now';
+  if (m < 60) return m + 'm ago';
+  if (h < 24) return h + 'h ago';
+  return d + 'd ago';
+}
+function todayStr() { return new Date().toISOString().split('T')[0]; }
+
+// ── SUPABASE DATA
+async function logActivity(leadId, action, fromVal, toVal) {
+  await sb.from('activity_log').insert({ lead_id: leadId, action, from_value: fromVal, to_value: toVal });
+}
+
+async function loadLeads() {
+  try {
+    const { data, error } = await sb.from('leads').select('*').order('created_at', { ascending: false });
+    if (error) throw error;
+    leadsData = data.map(r => ({
+      id: r.id, name: r.name||'', linkedin: r.linkedin||'', company: r.company||'',
+      location: r.location||'', employees: r.employees||'', title: r.title||'',
+      website: r.website||'', phone: r.phone||'', email: r.email||'',
+      confidence: r.confidence||'', notes: r.notes||'', stage: r.stage||'Cold',
+      followup_date: r.followup_date||'', source: r.source||'manual',
+      created_at: r.created_at, updated_at: r.updated_at,
+    }));
+    populateLocationFilter();
+    renderCRM();
+    updateStats();
+    updateBadges();
+    renderDashboard();
+  } catch(e) {
+    document.getElementById('crm-tbody').innerHTML =
+      `<tr><td colspan="7" class="loading-state" style="color:var(--coral)">Failed to load from Supabase: ${esc(e.message||e)}</td></tr>`;
+  }
+}
+
+async function updateLeadField(id, updates) {
+  await sb.from('leads').update(updates).eq('id', id);
+  const lead = leadsData.find(l => l.id === id);
+  if (lead) Object.assign(lead, updates);
+}
+
+// ── NAVIGATION
+const PANEL_PARENT = {
+  'dashboard': 'dashboard',
+  'crm': 'crm',
+  'ig-hub': 'ig-hub', 'ig-analytics': 'ig-hub', 'reels': 'ig-hub', 'content': 'ig-hub', 'ig-planner': 'ig-hub',
+  'workflows': 'workflows',
+  'cold-call': 'cold-call',
+};
+
+function goTo(panelId) {
+  document.querySelectorAll('.panel').forEach(p => p.classList.remove('active'));
+  document.getElementById('panel-' + panelId).classList.add('active');
+  const parent = PANEL_PARENT[panelId];
+  document.querySelectorAll('.nav-item').forEach(n => {
+    n.classList.toggle('active', n.dataset.panel === parent);
+  });
+  document.querySelector('main').scrollTop = 0;
+}
+
+document.querySelectorAll('.nav-item').forEach(item => {
+  item.addEventListener('click', () => goTo(item.dataset.panel));
+});
+
+document.addEventListener('click', e => {
+  const el = e.target.closest('[data-goto]');
+  if (el) goTo(el.dataset.goto);
+  const filterLink = e.target.closest('[data-goto-filter]');
+  if (filterLink) {
+    document.getElementById('crm-stage-filter').value = '';
+    goTo('crm');
+    renderCRM();
+  }
+});
+
+document.getElementById('header-date').textContent =
+  new Date().toLocaleDateString('en-US', {weekday:'short', month:'short', day:'numeric'});
+
+// ── DASHBOARD
+async function renderDashboard() {
+  const today = todayStr();
+  // Stats
+  const total = leadsData.length;
+  const withPhone = leadsData.filter(l => l.phone).length;
+  const won = leadsData.filter(l => l.stage === 'Closed Won').length;
+  const overdue = leadsData.filter(l => l.followup_date && l.followup_date <= today && l.stage !== 'Closed Won' && l.stage !== 'Closed Lost').length;
+  document.getElementById('d-total').textContent = total;
+  document.getElementById('d-phone').textContent = withPhone;
+  document.getElementById('d-conversion').textContent = total ? Math.round((won/total)*100) + '%' : '0%';
+  document.getElementById('d-overdue').textContent = overdue;
+  const overdueEl = document.getElementById('d-overdue');
+  if (overdue > 0) overdueEl.style.color = 'var(--coral)';
+  else overdueEl.style.color = '';
+
+  // Funnel
+  const maxCount = Math.max(1, ...STAGES.map(s => leadsData.filter(l => l.stage === s).length));
+  document.getElementById('dash-funnel').innerHTML = STAGES.map(s => {
+    const count = leadsData.filter(l => l.stage === s).length;
+    const pct = Math.round((count / maxCount) * 100);
+    return `<div class="dash-funnel-row">
+      <div class="dash-funnel-label">${esc(s)}</div>
+      <div class="dash-funnel-bar-wrap">
+        <div class="dash-funnel-bar" style="width:${pct}%;background:${STAGE_COLOR[s]}"></div>
+        <span class="dash-funnel-count">${count}</span>
+      </div>
+    </div>`;
+  }).join('');
+
+  // Today's call list
+  const callList = leadsData.filter(l => (l.stage === 'Cold' || l.stage === 'Called') && l.phone).slice(0, 15);
+  document.getElementById('dash-calls').innerHTML = callList.length ? callList.map(l =>
+    `<div class="dash-call-row">
+      <span class="dash-call-name">${esc(l.name||l.company)}</span>
+      <span class="dash-call-company">${esc(l.company)}</span>
+      <a href="tel:${esc(l.phone)}" class="dash-call-phone">${esc(l.phone)}</a>
+      <button class="dash-call-btn" data-quick-call="${esc(l.id)}">CALLED</button>
+    </div>`
+  ).join('') : '<div class="dash-empty">No leads to call today</div>';
+
+  // Overdue follow-ups
+  const overdueLeads = leadsData.filter(l => l.followup_date && l.followup_date <= today && l.stage !== 'Closed Won' && l.stage !== 'Closed Lost').slice(0, 10);
+  document.getElementById('dash-overdue').innerHTML = overdueLeads.length ? overdueLeads.map(l =>
+    `<div class="dash-call-row">
+      <span class="dash-call-name dash-overdue">${esc(l.name||l.company)}</span>
+      <span class="dash-call-company">${esc(l.followup_date)}</span>
+      <span class="stage-pill ${STAGE_CLASS[l.stage]}" style="font-size:9px">${esc(l.stage)}</span>
+    </div>`
+  ).join('') : '<div class="dash-empty">No overdue follow-ups</div>';
+
+  // Recent activity
+  const { data: activities } = await sb.from('activity_log').select('*, leads(name, company)').order('created_at', { ascending: false }).limit(20);
+  document.getElementById('dash-activity').innerHTML = (activities && activities.length) ? activities.map(a => {
+    const leadName = a.leads ? (a.leads.name || a.leads.company) : 'Unknown';
+    let desc = a.action;
+    if (a.action === 'stage_change') desc = `${esc(leadName)}: ${esc(a.from_value)} → ${esc(a.to_value)}`;
+    else if (a.action === 'note_added') desc = `${esc(leadName)}: note updated`;
+    else if (a.action === 'call_outcome') desc = `${esc(leadName)}: call — ${esc(a.to_value)}`;
+    else if (a.action === 'lead_created') desc = `${esc(leadName)}: lead added`;
+    else desc = `${esc(leadName)}: ${esc(a.action)}`;
+    return `<div class="dash-activity-item">
+      <div class="dash-activity-dot"></div>
+      <div class="dash-activity-text">${desc}</div>
+      <div class="dash-activity-time">${relativeTime(a.created_at)}</div>
+    </div>`;
+  }).join('') : '<div class="dash-empty">No activity yet</div>';
+}
+
+// Dashboard quick-call buttons
+document.addEventListener('click', async e => {
+  const btn = e.target.closest('[data-quick-call]');
+  if (!btn) return;
+  const id = btn.dataset.quickCall;
+  const lead = leadsData.find(l => l.id === id);
+  if (!lead) return;
+  const oldStage = lead.stage;
+  await updateLeadField(id, { stage: 'Called' });
+  lead.stage = 'Called';
+  await logActivity(id, 'stage_change', oldStage, 'Called');
+  updateStats(); renderCRM(); updateBadges(); renderDashboard();
+});
+
+// ── CRM
+function populateLocationFilter() {
+  const locs = [...new Set(leadsData.map(l => l.location).filter(Boolean))].sort();
+  const sel = document.getElementById('crm-loc-filter');
+  sel.innerHTML = '<option value="">All Locations</option>';
+  locs.forEach(loc => { const o = document.createElement('option'); o.value = o.textContent = loc; sel.appendChild(o); });
+}
+
+function updateStats() {
+  document.getElementById('s-total').textContent      = leadsData.length;
+  document.getElementById('s-phone').textContent      = leadsData.filter(l => l.phone).length;
+  document.getElementById('s-email').textContent      = leadsData.filter(l => l.email).length;
+  document.getElementById('s-called').textContent     = leadsData.filter(l => l.stage==='Called').length;
+  document.getElementById('s-interested').textContent = leadsData.filter(l => l.stage==='Interested').length;
+  document.getElementById('s-demo').textContent       = leadsData.filter(l => l.stage==='Demo Booked').length;
+  document.getElementById('s-won').textContent        = leadsData.filter(l => l.stage==='Closed Won').length;
+}
+
+function updateBadges() {
+  const badge = document.getElementById('nav-badge-crm');
+  if (badge) badge.textContent = leadsData.length || '';
+}
+
+function renderCRM() {
+  const search = document.getElementById('crm-search').value.toLowerCase();
+  const stageF = document.getElementById('crm-stage-filter').value;
+  const locF   = document.getElementById('crm-loc-filter').value;
+  const today  = todayStr();
+  let filtered = leadsData.filter(l => {
+    const t = (l.name+l.company+l.location+l.title).toLowerCase();
+    if (search && !t.includes(search)) return false;
+    if (stageF === '__followup__') {
+      return l.followup_date && l.followup_date <= today && l.stage !== 'Closed Won' && l.stage !== 'Closed Lost';
+    }
+    if (stageF && l.stage !== stageF) return false;
+    if (locF && l.location !== locF) return false;
+    return true;
+  });
+
+  // Sort
+  if (sortCol) {
+    filtered.sort((a, b) => {
+      let va, vb;
+      if (sortCol === 'name') { va = (a.name||a.company).toLowerCase(); vb = (b.name||b.company).toLowerCase(); }
+      else if (sortCol === 'location') { va = a.location.toLowerCase(); vb = b.location.toLowerCase(); }
+      else if (sortCol === 'stage') { va = STAGES.indexOf(a.stage); vb = STAGES.indexOf(b.stage); }
+      if (va < vb) return sortDir === 'asc' ? -1 : 1;
+      if (va > vb) return sortDir === 'asc' ? 1 : -1;
+      return 0;
+    });
+  }
+
+  // Update sort arrows
+  document.querySelectorAll('th.sortable .sort-arrow').forEach(el => {
+    const col = el.parentElement.dataset.sort;
+    el.textContent = col === sortCol ? (sortDir === 'asc' ? '▲' : '▼') : '';
+  });
+
+  const tbody = document.getElementById('crm-tbody');
+  if (!filtered.length) { tbody.innerHTML = '<tr><td colspan="7" class="loading-state">No leads match filters</td></tr>'; return; }
+  tbody.innerHTML = filtered.map(l => {
+    const stage = l.stage;
+    const checked = selectedLeads.has(l.id) ? 'checked' : '';
+    const quickBtns = (stage === 'Cold' || stage === 'Called') ?
+      `<button class="quick-btn" data-quick-stage="${esc(l.id)}" data-to="${stage==='Cold'?'Called':'Interested'}">${stage==='Cold'?'CALLED':'INT'}</button>` : '';
+    const acts = [
+      l.linkedin ? `<a class="action-btn" href="${esc(l.linkedin)}" target="_blank">LI</a>` : '',
+      l.website  ? `<a class="action-btn" href="${esc(l.website.startsWith('http')?l.website:'https://'+l.website)}" target="_blank">WEB</a>` : '',
+      l.phone    ? `<a class="action-btn" href="tel:${esc(l.phone)}">CALL</a>` : '',
+      quickBtns,
+    ].filter(Boolean).join('');
+    return `<tr data-id="${esc(l.id)}">
+      <td class="td-checkbox"><input type="checkbox" class="lead-checkbox" data-lead-id="${esc(l.id)}" ${checked}></td>
+      <td><div class="td-name">${esc(l.name||l.company)}</div><div class="td-company">${esc(l.name?l.company:l.title)}</div></td>
+      <td>${esc(l.location)}</td>
+      <td class="td-phone">${l.phone?esc(l.phone):'<span class="td-dash">—</span>'}</td>
+      <td>${l.email?'<span class="td-check">✓</span>':'<span class="td-dash">—</span>'}</td>
+      <td><span class="stage-pill ${STAGE_CLASS[stage]}">${esc(stage)}</span></td>
+      <td><div class="actions">${acts}</div></td>
+    </tr>`;
+  }).join('');
+
+  // Row click → open drawer
+  tbody.querySelectorAll('tr').forEach(tr => {
+    tr.addEventListener('click', e => {
+      if (e.target.closest('.action-btn') || e.target.closest('.quick-btn') || e.target.closest('.lead-checkbox')) return;
+      openDrawer(leadsData.find(l => l.id === tr.dataset.id));
+    });
+  });
+
+  updateBulkBar();
+}
+
+// Sort headers
+document.querySelectorAll('th.sortable').forEach(th => {
+  th.addEventListener('click', () => {
+    const col = th.dataset.sort;
+    if (sortCol === col) sortDir = sortDir === 'asc' ? 'desc' : 'asc';
+    else { sortCol = col; sortDir = 'asc'; }
+    renderCRM();
+  });
+});
+
+// Quick stage buttons
+document.addEventListener('click', async e => {
+  const btn = e.target.closest('[data-quick-stage]');
+  if (!btn) return;
+  e.stopPropagation();
+  const id = btn.dataset.quickStage;
+  const to = btn.dataset.to;
+  const lead = leadsData.find(l => l.id === id);
+  if (!lead) return;
+  const from = lead.stage;
+  await updateLeadField(id, { stage: to });
+  lead.stage = to;
+  await logActivity(id, 'stage_change', from, to);
+  updateStats(); renderCRM(); updateBadges(); renderDashboard();
+});
+
+// Checkboxes
+document.addEventListener('change', e => {
+  if (e.target.classList.contains('lead-checkbox')) {
+    const id = e.target.dataset.leadId;
+    if (e.target.checked) selectedLeads.add(id);
+    else selectedLeads.delete(id);
+    updateBulkBar();
+  }
+});
+document.getElementById('crm-select-all').addEventListener('change', function() {
+  const boxes = document.querySelectorAll('.lead-checkbox');
+  boxes.forEach(cb => { cb.checked = this.checked; if (this.checked) selectedLeads.add(cb.dataset.leadId); else selectedLeads.delete(cb.dataset.leadId); });
+  updateBulkBar();
+});
+
+function updateBulkBar() {
+  const bar = document.getElementById('bulk-bar');
+  const count = selectedLeads.size;
+  if (count > 0) { bar.classList.add('visible'); document.getElementById('bulk-bar-text').textContent = count + ' selected'; }
+  else bar.classList.remove('visible');
+}
+
+async function applyBulkStage() {
+  const newStage = document.getElementById('bulk-stage-select').value;
+  if (!newStage) return;
+  for (const id of selectedLeads) {
+    const lead = leadsData.find(l => l.id === id);
+    if (lead && lead.stage !== newStage) {
+      const from = lead.stage;
+      await updateLeadField(id, { stage: newStage });
+      lead.stage = newStage;
+      await logActivity(id, 'stage_change', from, newStage);
+    }
+  }
+  selectedLeads.clear();
+  document.getElementById('crm-select-all').checked = false;
+  updateStats(); renderCRM(); updateBadges(); renderDashboard();
+}
+
+document.getElementById('crm-search').addEventListener('input', renderCRM);
+document.getElementById('crm-stage-filter').addEventListener('change', renderCRM);
+document.getElementById('crm-loc-filter').addEventListener('change', renderCRM);
+
+// ── DRAWER
+async function openDrawer(lead) {
+  if (!lead) return;
+  currentDrawerLead = lead;
+  document.getElementById('drawer-name').textContent = lead.name || lead.company || '—';
+  document.getElementById('drawer-company').textContent = lead.name ? (lead.title?lead.title+' · ':'')+lead.company : lead.location;
+
+  // Stage buttons
+  const sd = document.getElementById('drawer-stages');
+  sd.innerHTML = STAGES.map(s =>
+    `<button class="drawer-stage-btn${s===lead.stage?' active-stage':''}" data-stage="${esc(s)}">${esc(s)}</button>`
+  ).join('');
+  sd.querySelectorAll('.drawer-stage-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const oldStage = lead.stage;
+      const newStage = btn.dataset.stage;
+      await updateLeadField(lead.id, { stage: newStage });
+      lead.stage = newStage;
+      await logActivity(lead.id, 'stage_change', oldStage, newStage);
+      sd.querySelectorAll('.drawer-stage-btn').forEach(b => b.classList.remove('active-stage'));
+      btn.classList.add('active-stage');
+      updateStats(); renderCRM(); updateBadges(); renderDashboard();
+      loadTimeline(lead.id);
+    });
+  });
+
+  // Call outcomes
+  const od = document.getElementById('drawer-outcomes');
+  od.innerHTML = OUTCOMES.map(o =>
+    `<button class="drawer-outcome-btn" data-outcome="${esc(o)}">${esc(o)}</button>`
+  ).join('');
+  od.querySelectorAll('.drawer-outcome-btn').forEach(btn => {
+    btn.addEventListener('click', async () => {
+      const outcome = btn.dataset.outcome;
+      await logActivity(lead.id, 'call_outcome', lead.stage, outcome);
+      btn.classList.add('logged');
+      setTimeout(() => btn.classList.remove('logged'), 1500);
+      // Auto-advance stage
+      const newStage = OUTCOME_STAGE[outcome];
+      if (newStage && lead.stage !== newStage) {
+        const old = lead.stage;
+        await updateLeadField(lead.id, { stage: newStage });
+        lead.stage = newStage;
+        await logActivity(lead.id, 'stage_change', old, newStage);
+        sd.querySelectorAll('.drawer-stage-btn').forEach(b => b.classList.toggle('active-stage', b.dataset.stage === newStage));
+        updateStats(); renderCRM(); updateBadges(); renderDashboard();
+      } else if (!newStage && (lead.stage === 'Cold')) {
+        await updateLeadField(lead.id, { stage: 'Called' });
+        lead.stage = 'Called';
+        await logActivity(lead.id, 'stage_change', 'Cold', 'Called');
+        sd.querySelectorAll('.drawer-stage-btn').forEach(b => b.classList.toggle('active-stage', b.dataset.stage === 'Called'));
+        updateStats(); renderCRM(); updateBadges(); renderDashboard();
+      }
+      if (outcome === 'Callback') {
+        const futureDate = new Date(Date.now() + 2*86400000).toISOString().split('T')[0];
+        await updateLeadField(lead.id, { followup_date: futureDate });
+        lead.followup_date = futureDate;
+        document.getElementById('drawer-followup').value = futureDate;
+      }
+      loadTimeline(lead.id);
+    });
+  });
+
+  // Fields
+  const fields = [
+    ['Phone',      lead.phone     ? `<a href="tel:${esc(lead.phone)}">${esc(lead.phone)}</a>` : '—'],
+    ['Email',      lead.email     ? `<a href="mailto:${esc(lead.email)}">${esc(lead.email)}</a>` : '—'],
+    ['Title',      esc(lead.title) || '—'],
+    ['Location',   esc(lead.location) || '—'],
+    ['Employees',  esc(lead.employees) || '—'],
+    ['Website',    lead.website   ? `<a href="${esc(lead.website.startsWith('http')?lead.website:'https://'+lead.website)}" target="_blank">${esc(lead.website)}</a>` : '—'],
+    ['LinkedIn',   lead.linkedin  ? `<a href="${esc(lead.linkedin)}" target="_blank">View Profile</a>` : '—'],
+    ['Confidence', esc(lead.confidence) || '—'],
+  ];
+  document.getElementById('drawer-fields').innerHTML = fields.map(([lbl,val]) =>
+    `<div class="drawer-field"><div class="drawer-field-label">${lbl}</div><div class="drawer-field-val">${val}</div></div>`
+  ).join('');
+
+  // Notes
+  const notesEl = document.getElementById('drawer-notes');
+  notesEl.value = lead.notes || '';
+  let notesTimer;
+  notesEl.oninput = () => {
+    clearTimeout(notesTimer);
+    notesTimer = setTimeout(async () => {
+      await updateLeadField(lead.id, { notes: notesEl.value });
+      lead.notes = notesEl.value;
+      await logActivity(lead.id, 'note_added', null, null);
+    }, 800);
+  };
+
+  // Follow-up date
+  const fuEl = document.getElementById('drawer-followup');
+  fuEl.value = lead.followup_date || '';
+  fuEl.onchange = async () => {
+    await updateLeadField(lead.id, { followup_date: fuEl.value || null });
+    lead.followup_date = fuEl.value;
+    renderDashboard();
+  };
+
+  // Activity timeline
+  await loadTimeline(lead.id);
+
+  document.getElementById('drawer').classList.add('open');
+  document.getElementById('drawer-overlay').classList.add('open');
+}
+
+async function loadTimeline(leadId) {
+  const { data } = await sb.from('activity_log').select('*').eq('lead_id', leadId).order('created_at', { ascending: false }).limit(20);
+  const el = document.getElementById('drawer-timeline');
+  if (!data || !data.length) { el.innerHTML = '<div class="dash-empty">No activity yet</div>'; return; }
+  el.innerHTML = data.map(a => {
+    let desc = a.action;
+    if (a.action === 'stage_change') desc = `Stage: ${esc(a.from_value)} → ${esc(a.to_value)}`;
+    else if (a.action === 'note_added') desc = 'Note updated';
+    else if (a.action === 'call_outcome') desc = `Call: ${esc(a.to_value)}`;
+    else if (a.action === 'lead_created') desc = 'Lead created';
+    return `<div class="timeline-item">
+      <div class="timeline-text">${desc}</div>
+      <div class="timeline-time">${relativeTime(a.created_at)}</div>
+    </div>`;
+  }).join('');
+}
+
+function closeDrawer() {
+  document.getElementById('drawer').classList.remove('open');
+  document.getElementById('drawer-overlay').classList.remove('open');
+  currentDrawerLead = null;
+}
+document.getElementById('drawer-close').addEventListener('click', closeDrawer);
+document.getElementById('drawer-overlay').addEventListener('click', closeDrawer);
+
+// ── CSV EXPORT
+function exportCSV() {
+  const headers = ['Name','Company','Location','Phone','Email','Stage','Follow-up','Notes'];
+  const rows = leadsData.map(l => [l.name,l.company,l.location,l.phone,l.email,l.stage,l.followup_date,l.notes].map(v => '"'+String(v||'').replace(/"/g,'""')+'"'));
+  const csv = [headers.join(','), ...rows.map(r => r.join(','))].join('\n');
+  const blob = new Blob([csv], { type: 'text/csv' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'workfloor-leads-' + todayStr() + '.csv';
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+
+// ── IMPORT MODAL
+function openImportModal() {
+  document.getElementById('import-modal').classList.add('open');
+}
+function closeImportModal() {
+  document.getElementById('import-modal').classList.remove('open');
+  ['import-name','import-company','import-phone','import-email','import-location','import-title'].forEach(id => document.getElementById(id).value = '');
+}
+async function saveNewLead() {
+  const lead = {
+    name: document.getElementById('import-name').value.trim(),
+    company: document.getElementById('import-company').value.trim(),
+    phone: document.getElementById('import-phone').value.trim(),
+    email: document.getElementById('import-email').value.trim(),
+    location: document.getElementById('import-location').value.trim(),
+    title: document.getElementById('import-title').value.trim(),
+    stage: 'Cold',
+    source: 'manual',
+  };
+  if (!lead.name && !lead.company) { alert('Name or Company is required.'); return; }
+  const { data, error } = await sb.from('leads').insert(lead).select().single();
+  if (error) { alert('Failed to save: ' + error.message); return; }
+  await logActivity(data.id, 'lead_created', null, null);
+  closeImportModal();
+  await loadLeads();
+}
+
+// ── BACKUP MODAL
+function openBackupModal() {
+  document.getElementById('backup-modal').classList.add('open');
+  document.getElementById('backup-status').textContent = '';
+}
+function closeBackupModal() {
+  document.getElementById('backup-modal').classList.remove('open');
+}
+async function exportBackup() {
+  const status = document.getElementById('backup-status');
+  status.textContent = 'Exporting...';
+  const { data: leads } = await sb.from('leads').select('*');
+  const { data: activity } = await sb.from('activity_log').select('*');
+  const backup = { exported_at: new Date().toISOString(), leads: leads || [], activity_log: activity || [] };
+  const blob = new Blob([JSON.stringify(backup, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'workfloor-backup-' + todayStr() + '.json';
+  a.click();
+  URL.revokeObjectURL(a.href);
+  status.textContent = 'Backup exported successfully.';
+}
+async function importBackup(event) {
+  const file = event.target.files[0];
+  if (!file) return;
+  const status = document.getElementById('backup-status');
+  status.textContent = 'Reading file...';
+  try {
+    const text = await file.text();
+    const data = JSON.parse(text);
+    if (!data.leads || !Array.isArray(data.leads)) throw new Error('Invalid backup format');
+    if (!confirm(`Import ${data.leads.length} leads and ${(data.activity_log||[]).length} activity records? This will add to existing data.`)) {
+      status.textContent = 'Import cancelled.'; return;
+    }
+    status.textContent = 'Importing leads...';
+    if (data.leads.length) {
+      const cleaned = data.leads.map(l => { const { id, ...rest } = l; return rest; });
+      await sb.from('leads').insert(cleaned);
+    }
+    if (data.activity_log && data.activity_log.length) {
+      status.textContent = 'Importing activity...';
+      const cleaned = data.activity_log.map(a => { const { id, ...rest } = a; return rest; });
+      await sb.from('activity_log').insert(cleaned);
+    }
+    status.textContent = 'Import complete. Reloading...';
+    await loadLeads();
+    status.textContent = `Imported ${data.leads.length} leads successfully.`;
+  } catch(e) {
+    status.textContent = 'Error: ' + e.message;
+  }
+  event.target.value = '';
+}
+
+// ── REELS
+const dropZone  = document.getElementById('drop-zone');
+const fileInput = document.getElementById('reel-file-input');
+dropZone.addEventListener('click', () => fileInput.click());
+dropZone.addEventListener('dragover', e => { e.preventDefault(); dropZone.classList.add('drag-over'); });
+dropZone.addEventListener('dragleave', () => dropZone.classList.remove('drag-over'));
+dropZone.addEventListener('drop', e => {
+  e.preventDefault(); dropZone.classList.remove('drag-over');
+  const f = e.dataTransfer.files[0];
+  if (f) { currentFileName = f.name; document.getElementById('drop-zone-text').textContent = '✓ ' + f.name; }
+});
+fileInput.addEventListener('change', () => {
+  if (fileInput.files[0]) { currentFileName = fileInput.files[0].name; document.getElementById('drop-zone-text').textContent = '✓ ' + currentFileName; }
+});
+
+function scoreHook(text) {
+  const lower = text.toLowerCase();
+  let score = 0;
+  POWER_WORDS.forEach(w => { if (lower.includes(w)) score += 1.2; });
+  if (text.includes('?')) score += 0.8;
+  if (text.includes('$') || /\d+[k%]/.test(lower)) score += 0.8;
+  if (lower.split(/\s+/).length >= 6) score += 0.5;
+  if (/^(i |you |stop |never |this |here|the |most )/.test(lower)) score += 0.5;
+  return Math.min(10, Math.round(score * 10) / 10);
+}
+function scoreColor(s) { return s>=7?'#3aaa6e':s>=4?'#e8a020':'#d95f3b'; }
+function getVerdict(s) {
+  if (s>=8) return 'Strong hook — high stop-scroll potential';
+  if (s>=6) return 'Good hook — could be tightened';
+  if (s>=4) return 'Average hook — needs more punch';
+  return 'Weak hook — rewrite recommended';
+}
+
+document.getElementById('analyze-btn').addEventListener('click', () => {
+  const text = document.getElementById('reel-transcript').value.trim();
+  if (!text && !currentFileName) { alert('Paste a transcript or drop a file first.'); return; }
+  const firstLine = text.split('\n')[0] || text.slice(0,100);
+  const score = scoreHook(firstLine);
+  const color = scoreColor(score);
+  document.getElementById('hook-score-num').textContent = score.toFixed(1);
+  document.getElementById('hook-score-num').style.color = color;
+  document.getElementById('hook-score-fill').style.width = (score*10)+'%';
+  document.getElementById('hook-score-fill').style.background = color;
+  document.getElementById('hook-score-verdict').textContent = getVerdict(score);
+
+  const working=[], improve=[];
+  if (text.includes('?')) working.push('Uses a question — drives curiosity');
+  if (/\$|[0-9]+[k%]/.test(text)) working.push('Includes a number or dollar amount — adds credibility');
+  if (/^(i |you |stop |never |this |here|the )/.test(text.toLowerCase())) working.push('Strong opener — good pattern interrupt');
+  if (POWER_WORDS.some(w => text.toLowerCase().includes(w))) working.push('Power words detected — emotional trigger present');
+  if (!working.length) working.push('Paste more of the script for deeper analysis');
+  if (score<7) improve.push('Open with a harder pattern interrupt (Stop / Never / I built)');
+  if (text.split('\n').length<3) improve.push('Script seems short — add more context in the body');
+  if (!/\$|[0-9]+[k%]/.test(text)) improve.push('Add a specific number or result to boost credibility');
+  if (!text.includes('?')) improve.push('Consider adding a rhetorical question in the hook');
+  if (!improve.length) improve.push('Hook is strong — focus on pacing and B-roll variety');
+
+  document.getElementById('analysis-working').innerHTML = working.map(w=>`<li>${esc(w)}</li>`).join('');
+  document.getElementById('analysis-improve').innerHTML = improve.map(i=>`<li>${esc(i)}</li>`).join('');
+  const iters = [
+    'I built this in [X] days and it changed everything.',
+    "Most people don't know this is even possible.",
+    "Stop [doing X]. Here's what actually works.",
+    "I spent [X] hours on this so you don't have to.",
+    'The [industry] secret nobody talks about.',
+  ];
+  document.getElementById('analysis-hooks').innerHTML = iters.map((h,i)=>
+    `<div class="hook-iteration"><span class="hook-iter-num">0${i+1}</span><span>${esc(h)}</span></div>`
+  ).join('');
+  const fname = currentFileName || 'your-reel.mp4';
+  document.getElementById('ingest-cmd-text').textContent = `python3 ~/projects/ingest/ingest.py "${fname}"`;
+  document.getElementById('analysis-output').classList.add('visible');
+});
+
+document.getElementById('ingest-copy-btn').addEventListener('click', function() {
+  navigator.clipboard.writeText(document.getElementById('ingest-cmd-text').textContent);
+  this.textContent='COPIED'; this.classList.add('copied');
+  setTimeout(()=>{ this.textContent='COPY'; this.classList.remove('copied'); },2000);
+});
+
+document.getElementById('copy-prompt-btn').addEventListener('click', function() {
+  const t = document.getElementById('reel-transcript').value.trim();
+  navigator.clipboard.writeText(`You are a short-form video content coach specializing in high-retention reels.\n\nAnalyze the following reel script/transcript and provide:\n\n1. HOOK SCORE (0–10): Rate the opening hook's stop-scroll power\n2. WHAT'S WORKING: 3–5 specific strengths\n3. WHAT TO IMPROVE: 3–5 specific, actionable improvements\n4. 5 HOOK ITERATIONS: Rewrite the opening hook 5 ways (curiosity, pain, results, provocation, story)\n\n---\nREEL TRANSCRIPT:\n${t||'[No transcript provided]'}\n---`);
+  this.textContent='Copied!';
+  setTimeout(()=>{ this.textContent='Copy Claude Prompt'; },2000);
+});
+
+// ── CONTENT
+function renderContent() {
+  const ideas = contentNiche==='hvac'?HVAC_IDEAS:contentNiche==='personal'?PERSONAL_IDEAS:[...HVAC_IDEAS,...PERSONAL_IDEAS];
+  const hooks = contentNiche==='hvac'?HVAC_HOOKS:contentNiche==='personal'?PERSONAL_HOOKS:[...HVAC_HOOKS,...PERSONAL_HOOKS];
+  document.getElementById('ideas-list').innerHTML = ideas.map(idea=>
+    `<div class="idea-card"><div class="idea-hook">${esc(idea.hook)}</div><div class="idea-desc">${esc(idea.desc)}</div><span class="idea-tag tag-${idea.tag}">${idea.tag}</span></div>`
+  ).join('');
+  document.getElementById('hooks-list').innerHTML = hooks.map((hook,i)=>
+    `<div class="hook-row"><span class="hook-num">${String(i+1).padStart(2,'0')}</span><div class="hook-content"><div class="hook-text">${esc(hook.text)}</div><span class="idea-tag tag-${hook.tag}">${hook.tag}</span></div><button class="hook-copy-btn" data-text="${esc(hook.text)}">COPY</button></div>`
+  ).join('');
+  document.querySelectorAll('.hook-copy-btn').forEach(btn => {
+    btn.addEventListener('click', function() {
+      navigator.clipboard.writeText(this.dataset.text);
+      this.textContent='COPIED'; this.classList.add('copied');
+      setTimeout(()=>{ this.textContent='COPY'; this.classList.remove('copied'); },2000);
+    });
+  });
+}
+
+document.querySelectorAll('.niche-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.niche-btn').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    contentNiche = btn.dataset.niche;
+    renderContent();
+  });
+});
+
+// ── WORKFLOWS
+document.getElementById('workflow-cards').innerHTML = WORKFLOWS.map(wf=>
+  `<div class="workflow-card"><div class="wf-dot"></div><div class="wf-info"><div class="wf-name">${esc(wf.name)}</div><div class="wf-desc">${esc(wf.desc)}</div></div><div class="wf-times"><div class="wf-last">Last: ${esc(wf.last)}</div><div class="wf-next">Next: ${esc(wf.next)}</div></div><div class="wf-status-tag">Active</div></div>`
+).join('');
+
+// ── COLD CALL NAV
+document.querySelectorAll('.cc-nav-item').forEach(item => {
+  item.addEventListener('click', () => {
+    document.querySelectorAll('.cc-phase').forEach(p => p.classList.remove('visible'));
+    document.getElementById('cc-' + item.dataset.cc).classList.add('visible');
+    document.querySelectorAll('.cc-nav-item').forEach(n => n.classList.remove('active'));
+    item.classList.add('active');
+  });
+});
+document.querySelectorAll('.cc-obj-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('.cc-obj-panel').forEach(p => p.classList.remove('visible'));
+    document.getElementById('cc-or-' + btn.dataset.obj).classList.add('visible');
+    document.querySelectorAll('.cc-obj-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  });
+});
+
+// ── INIT
+loadLeads();
+renderContent();
+</script>
+</body>
+</html>

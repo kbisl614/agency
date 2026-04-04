@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Work Floor — Cold Call Script</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Barlow:wght@400;500;600;700&family=Barlow+Condensed:wght@600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --navy: #0d1b2a;
+    --navy-mid: #162234;
+    --navy-light: #1e2f42;
+    --amber: #e8a020;
+    --amber-dim: #a06c10;
+    --amber-glow: rgba(232,160,32,0.10);
+    --coral: #d95f3b;
+    --green: #3aaa6e;
+    --text: #e8e4dc;
+    --text-dim: #8a9ab0;
+    --text-muted: #4a5a6e;
+    --border: rgba(255,255,255,0.07);
+    --border-amber: rgba(232,160,32,0.3);
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { font-size: 14px; }
+  body {
+    background: var(--navy);
+    color: var(--text);
+    font-family: 'Barlow', sans-serif;
+    min-height: 100vh;
+    display: grid;
+    grid-template-columns: 220px 1fr;
+    grid-template-rows: auto 1fr;
+  }
+
+  /* HEADER */
+  header {
+    grid-column: 1 / -1;
+    background: var(--navy-mid);
+    border-bottom: 1px solid var(--border);
+    padding: 14px 24px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .logo {
+    font-family: 'Barlow Condensed', sans-serif;
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--amber);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+  }
+  .header-tag {
+    font-size: 11px;
+    font-family: 'DM Mono', monospace;
+    color: var(--text-muted);
+    border: 1px solid var(--border);
+    padding: 3px 8px;
+    border-radius: 3px;
+    letter-spacing: 0.05em;
+  }
+  .header-right {
+    margin-left: auto;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+  }
+  .header-goal {
+    font-size: 12px;
+    color: var(--amber);
+    font-family: 'DM Mono', monospace;
+    background: var(--amber-glow);
+    border: 1px solid var(--border-amber);
+    padding: 4px 12px;
+    border-radius: 3px;
+  }
+  .status-dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    background: var(--green);
+    animation: pulse 2s infinite;
+  }
+  @keyframes pulse { 0%,100%{opacity:1}50%{opacity:0.3} }
+
+  /* NAV */
+  nav {
+    background: var(--navy-mid);
+    border-right: 1px solid var(--border);
+    padding: 20px 0;
+    position: sticky;
+    top: 0;
+    height: calc(100vh - 52px);
+    overflow-y: auto;
+  }
+  .nav-label {
+    font-family: 'DM Mono', monospace;
+    font-size: 10px;
+    color: var(--text-muted);
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 0 16px 8px;
+  }
+  .nav-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 10px 16px;
+    cursor: pointer;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    font-size: 13px;
+    color: var(--text-dim);
+    font-weight: 500;
+    user-select: none;
+  }
+  .nav-item:hover { background: rgba(255,255,255,0.03); color: var(--text); }
+  .nav-item.active { border-left-color: var(--amber); background: var(--amber-glow); color: var(--amber); }
+  .nav-num { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); min-width: 16px; }
+  .nav-item.active .nav-num { color: var(--amber-dim); }
+  .nav-div { height: 1px; background: var(--border); margin: 10px 16px; }
+
+  /* MAIN */
+  main { padding: 28px 32px; overflow-y: auto; height: calc(100vh - 52px); }
+  .phase { display: none; animation: fadeIn 0.18s ease; }
+  .phase.visible { display: block; }
+  @keyframes fadeIn { from{opacity:0;transform:translateY(5px)} to{opacity:1;transform:translateY(0)} }
+
+  .phase-header { margin-bottom: 22px; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
+  .phase-eyebrow { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--amber); letter-spacing: 0.1em; text-transform: uppercase; margin-bottom: 5px; }
+  .phase-title { font-family: 'Barlow Condensed', sans-serif; font-size: 28px; font-weight: 700; color: var(--text); }
+  .phase-sub { font-size: 13px; color: var(--text-dim); margin-top: 4px; }
+
+  /* CARDS */
+  .card { background: var(--navy-light); border: 1px solid var(--border); border-radius: 6px; padding: 16px 20px; margin-bottom: 12px; }
+  .card.amber { border-color: var(--border-amber); background: linear-gradient(135deg, var(--navy-light), rgba(232,160,32,0.04)); }
+  .card.green { border-color: rgba(58,170,110,0.3); background: rgba(58,170,110,0.05); }
+  .card-label { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--text-muted); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .card.amber .card-label { color: var(--amber-dim); }
+  .card.green .card-label { color: #2a7a50; }
+  .card-text { font-size: 14px; line-height: 1.75; color: var(--text); }
+  .card-note { font-size: 12px; color: var(--text-dim); margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border); font-style: italic; }
+
+  /* MISSION BANNER */
+  .mission {
+    background: var(--amber-glow);
+    border: 1px solid var(--border-amber);
+    border-radius: 6px;
+    padding: 14px 20px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+  .mission-icon { font-size: 20px; }
+  .mission-text { font-size: 13px; color: var(--amber); font-weight: 600; line-height: 1.5; }
+  .mission-sub { font-size: 12px; color: var(--text-dim); font-weight: 400; }
+
+  /* QUESTIONS */
+  .q-list { display: flex; flex-direction: column; gap: 10px; }
+  .q-item { background: var(--navy-light); border: 1px solid var(--border); border-radius: 6px; padding: 14px 18px; display: grid; grid-template-columns: 26px 1fr; gap: 12px; align-items: start; }
+  .q-item.key { border-color: var(--border-amber); }
+  .q-num { font-family: 'DM Mono', monospace; font-size: 13px; font-weight: 500; color: var(--amber); line-height: 1.75; }
+  .q-text { font-size: 14px; color: var(--text); line-height: 1.75; }
+  .q-hint { font-size: 12px; color: var(--text-dim); margin-top: 5px; }
+  .q-hint.amber { color: var(--amber-dim); }
+
+  /* OBJECTIONS */
+  .obj-wrap { display: grid; grid-template-columns: 210px 1fr; gap: 14px; align-items: start; }
+  .obj-list { display: flex; flex-direction: column; gap: 5px; }
+  .obj-btn {
+    text-align: left;
+    background: var(--navy-light);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 11px 13px;
+    cursor: pointer;
+    font-family: 'Barlow', sans-serif;
+    font-size: 12px;
+    font-weight: 500;
+    color: var(--text-dim);
+    transition: all 0.15s;
+    line-height: 1.4;
+  }
+  .obj-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.14); }
+  .obj-btn.active { border-color: var(--coral); color: var(--coral); background: rgba(217,95,59,0.08); }
+  .obj-panel { display: none; }
+  .obj-panel.visible { display: block; }
+  .obj-trigger { font-size: 12px; color: var(--text-muted); font-family: 'DM Mono', monospace; margin-bottom: 12px; padding-bottom: 12px; border-bottom: 1px solid var(--border); font-style: italic; line-height: 1.6; }
+
+  /* CLOSE */
+  .close-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+  .close-step { font-family: 'DM Mono', monospace; font-size: 10px; color: var(--green); letter-spacing: 0.08em; text-transform: uppercase; margin-bottom: 8px; }
+  .full { grid-column: 1 / -1; }
+
+  /* SCROLLBAR */
+  ::-webkit-scrollbar { width: 4px; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  @media (max-width: 680px) {
+    body { grid-template-columns: 1fr; }
+    nav { display: flex; flex-wrap: wrap; height: auto; position: static; padding: 10px; gap: 4px; border-right: none; border-bottom: 1px solid var(--border); }
+    .nav-label, .nav-div { display: none; }
+    .nav-item { border-left: none; border-radius: 4px; padding: 7px 11px; font-size: 12px; }
+    .nav-item.active { border-left: none; }
+    .obj-wrap { grid-template-columns: 1fr; }
+    .close-grid { grid-template-columns: 1fr; }
+    main { padding: 18px; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo">Work Floor</div>
+  <div class="header-tag">COLD CALL REF</div>
+  <div class="header-right">
+    <div class="header-goal">GOAL: Book the discovery call</div>
+    <div class="status-dot"></div>
+  </div>
+</header>
+
+<nav>
+  <div class="nav-label">Script</div>
+  <div class="nav-item active" onclick="show('opener',this)"><span class="nav-num">01</span> Opener</div>
+  <div class="nav-item" onclick="show('discovery',this)"><span class="nav-num">02</span> Surface Pain</div>
+  <div class="nav-item" onclick="show('hook',this)"><span class="nav-num">03</span> The Hook</div>
+  <div class="nav-div"></div>
+  <div class="nav-label">Pushback</div>
+  <div class="nav-item" onclick="show('objections',this)"><span class="nav-num">04</span> Objections</div>
+  <div class="nav-div"></div>
+  <div class="nav-label">Finish</div>
+  <div class="nav-item" onclick="show('close',this)"><span class="nav-num">05</span> Book the Call</div>
+</nav>
+
+<main>
+
+  <!-- OPENER -->
+  <div class="phase visible" id="phase-opener">
+    <div class="phase-header">
+      <div class="phase-eyebrow">Phase 01 — first 30 seconds</div>
+      <div class="phase-title">The Opener</div>
+      <div class="phase-sub">You are not pitching anything yet. You are earning 2 minutes.</div>
+    </div>
+
+    <div class="mission">
+      <div class="mission-icon">🎯</div>
+      <div>
+        <div class="mission-text">The only goal of this call is to book a discovery call.</div>
+        <div class="mission-sub">You don't know their bottleneck yet. Don't pretend you do. Don't sell agents. Don't explain AI. Just get 30 minutes on the calendar.</div>
+      </div>
+    </div>
+
+    <div class="card amber">
+      <div class="card-label">Opening line</div>
+      <div class="card-text">"Hey [Name], this is [Your Name] from Work Floor. We help HVAC businesses implement AI into their operations — not generic software, custom-built systems specific to how your business runs. Quick question before I say anything else: what's the one thing in your business right now that's either costing you the most time or the most money?"</div>
+      <div class="card-note">Stop talking. Let them answer. That answer is your entire pitch.</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">If they ask "what do you actually do?"</div>
+      <div class="card-text">"We get on a discovery call with HVAC business owners, figure out exactly where they're losing time or money — whether that's leads, dispatch, follow-up, reporting, whatever — and then we custom-build autonomous AI agents that handle those problems. The system grows with the business. As AI improves, we upgrade it. You're not buying software. You're getting a partner."</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">If they push back immediately — "not interested"</div>
+      <div class="card-text">"Totally fair. One question before I let you go — are you running at full capacity right now, or is there somewhere in the business you feel like you're leaving money on the table?"</div>
+      <div class="card-note">Most owners will hesitate. That hesitation is your opening.</div>
+    </div>
+  </div>
+
+  <!-- SURFACE PAIN -->
+  <div class="phase" id="phase-discovery">
+    <div class="phase-header">
+      <div class="phase-eyebrow">Phase 02 — find the crack</div>
+      <div class="phase-title">Surface the Pain</div>
+      <div class="phase-sub">You're not diagnosing yet — that's the discovery call. You just need them to feel the problem.</div>
+    </div>
+
+    <div class="q-list">
+      <div class="q-item">
+        <div class="q-num">Q1</div>
+        <div>
+          <div class="q-text">"When a lead comes in after hours — what actually happens to it?"</div>
+          <div class="q-hint">→ Most say "honestly, not much." That's your hook.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">Q2</div>
+        <div>
+          <div class="q-text">"How much time does your team spend on stuff that feels repetitive — scheduling, follow-ups, reporting?"</div>
+          <div class="q-hint">→ Listen for frustration. Don't jump in. Let it build.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">Q3</div>
+        <div>
+          <div class="q-text">"When you look at your numbers at the end of the month — do you feel like you have a clear picture of where revenue is coming from and where it's leaking?"</div>
+          <div class="q-hint">→ Most owners don't. Visibility is a universal pain.</div>
+        </div>
+      </div>
+      <div class="q-item">
+        <div class="q-num">Q4</div>
+        <div>
+          <div class="q-text">"What does your business look like in two years if nothing changes?"</div>
+          <div class="q-hint">→ This creates forward pressure. They start selling themselves.</div>
+        </div>
+      </div>
+      <div class="q-item key">
+        <div class="q-num" style="color:var(--amber);">Q5</div>
+        <div>
+          <div class="q-text">"If you could fix one thing that's either costing you money or eating your time — what would it be?"</div>
+          <div class="q-hint amber">→ This is the bridge to the hook. Whatever they say, your next line is Phase 3.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- THE HOOK -->
+  <div class="phase" id="phase-hook">
+    <div class="phase-header">
+      <div class="phase-eyebrow">Phase 03 — one line pivot</div>
+      <div class="phase-title">The Hook</div>
+      <div class="phase-sub">After they name their pain, this is your only pitch. Keep it short.</div>
+    </div>
+
+    <div class="card amber">
+      <div class="card-label">Universal hook — works for any bottleneck they name</div>
+      <div class="card-text">"That's exactly what we dig into on a discovery call. We don't come in with a pre-built solution — we spend 30 minutes understanding your business specifically, then we build autonomous agents custom to how you operate. Whether it's lead capture, dispatch, reporting, follow-up — the agent retrieves the data, surfaces the insight, and handles the action. You get the ROI without adding headcount.<br><br>I'm not asking you to commit to anything. I just want 30 minutes to see if there's a fit."</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">What autonomous agents actually do — if they ask</div>
+      <div class="card-text">"Think of it as an employee that never sleeps. It retrieves information from your systems — job data, customer history, lead activity — brings it together, and takes action based on rules we build together. Books the follow-up. Flags the cancellation. Pulls the weekly revenue report. It's not a chatbot. It's a system that does real operational work inside your business."</div>
+    </div>
+
+    <div class="card">
+      <div class="card-label">Why us vs. just buying software</div>
+      <div class="card-text">"Software is generic. It's built for everyone, which means it's optimized for no one. What we build is specific to your workflow, your CRM, your team. And as AI keeps improving — and it will — we upgrade your system. You don't have to chase the technology. That's our job."</div>
+    </div>
+
+    <div class="card green">
+      <div class="card-label">The partnership framing — use this if they ask about pricing</div>
+      <div class="card-text">"We're not a vendor, we're a partner. We don't hand you a product and disappear. We stay in it with you. As your business grows, the agents scale with it. As AI evolves, we implement the better systems. The relationship is built around your ROI, not a subscription renewal."</div>
+    </div>
+  </div>
+
+  <!-- OBJECTIONS -->
+  <div class="phase" id="phase-objections">
+    <div class="phase-header">
+      <div class="phase-eyebrow">Phase 04 — pushback</div>
+      <div class="phase-title">Objection Handling</div>
+      <div class="phase-sub">Click an objection to see the response.</div>
+    </div>
+
+    <div class="obj-wrap">
+      <div class="obj-list">
+        <button class="obj-btn active" onclick="showObj('software',this)">"We already have software."</button>
+        <button class="obj-btn" onclick="showObj('ai',this)">"We're not into AI."</button>
+        <button class="obj-btn" onclick="showObj('cost',this)">"What does it cost?"</button>
+        <button class="obj-btn" onclick="showObj('think',this)">"I need to think about it."</button>
+        <button class="obj-btn" onclick="showObj('busy',this)">"Bad time, we're slammed."</button>
+        <button class="obj-btn" onclick="showObj('trust',this)">"How do I know it works?"</button>
+        <button class="obj-btn" onclick="showObj('why',this)">"Why HVAC specifically?"</button>
+      </div>
+
+      <div>
+        <div class="obj-panel visible" id="or-software">
+          <div class="obj-trigger">"We already have software for that."</div>
+          <div class="card-text">"Good — we don't replace it, we sit on top of it. Your CRM, your scheduling tool, your job management platform — we connect to all of it. The agents pull from those systems and take action across them. You keep the tools you know. We add the intelligence layer those tools don't have."</div>
+        </div>
+        <div class="obj-panel" id="or-ai">
+          <div class="obj-trigger">"We're not really into AI / AI doesn't work for us."</div>
+          <div class="card-text">"That's fair — a lot of AI tools are gimmicks. What we build isn't a chatbot or a dashboard feature. It's an autonomous system that does real operational work: retrieves your data, identifies what needs to happen, and acts on it. Your team never has to touch it. You just see the output — filled jobs, recovered leads, clean reports.<br><br>I'm not asking you to trust AI. I'm asking for 30 minutes to show you what it actually does in an HVAC business."</div>
+        </div>
+        <div class="obj-panel" id="or-cost">
+          <div class="obj-trigger">"What does it cost?"</div>
+          <div class="card-text">"That's exactly why we do a discovery call first — the scope determines the price. We build custom, so we don't quote until we understand your business. What I can tell you is that everything we build is tied to a return. If the math doesn't make sense for your operation, we'll tell you on the call. We're not interested in a bad fit."</div>
+        </div>
+        <div class="obj-panel" id="or-think">
+          <div class="obj-trigger">"I need to think about it / talk to my partner."</div>
+          <div class="card-text">"Completely understand. The discovery call is actually the right place to bring your partner — it's not a sales pitch, it's a working session to map your operation. Nothing to decide before that.<br><br>Can we get 30 minutes on the calendar for both of you? I'll send a calendar link right after this call."</div>
+        </div>
+        <div class="obj-panel" id="or-busy">
+          <div class="obj-trigger">"Bad time — we're in the middle of busy season."</div>
+          <div class="card-text">"Honestly, busy season is exactly when the problems are loudest — missed leads, dispatch chaos, techs waiting on information. That's the data we'd use to build the right system.<br><br>I'm not asking for time now. Can we schedule 30 minutes two weeks out when things settle? The conversation will be more valuable with real pain fresh in your mind."</div>
+        </div>
+        <div class="obj-panel" id="or-trust">
+          <div class="obj-trigger">"How do I know this actually works?"</div>
+          <div class="card-text">"You shouldn't take my word for it — that's exactly why we do the discovery call before anything else. We map your specific operation, show you what an agent would do in your workflow, and you can decide if the logic makes sense before we build a single thing.<br><br>You're not buying anything on the call. You're just seeing if it's real."</div>
+        </div>
+        <div class="obj-panel" id="or-why">
+          <div class="obj-trigger">"Why do you focus on HVAC?"</div>
+          <div class="card-text">"HVAC businesses have a specific set of operational patterns — seasonal demand, dispatch complexity, after-hours leads, recurring maintenance — that are highly automatable. We know the workflows, we know the CRMs, and we can move fast because we're not starting from scratch every time.<br><br>It also means we're not a generalist agency pitching you something we've never done before."</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CLOSE -->
+  <div class="phase" id="phase-close">
+    <div class="phase-header">
+      <div class="phase-eyebrow">Phase 05 — the only ask</div>
+      <div class="phase-title">Book the Discovery Call</div>
+      <div class="phase-sub">This is the entire goal. One ask, one close.</div>
+    </div>
+
+    <div class="close-grid">
+      <div class="card amber full">
+        <div class="card-label">The ask — say this exactly</div>
+        <div class="card-text">"I'd like to get 30 minutes on the calendar with you — no pitch, no commitment. We map your operation, identify the biggest place you're losing time or money, and I'll show you what an autonomous agent would actually do about it. If it doesn't make sense for your business, I'll tell you. What does your schedule look like this week or next?"</div>
+      </div>
+      <div class="card">
+        <div class="close-step">If they say yes</div>
+        <div class="card-text">"Perfect. I'll send you a calendar link right now — takes 10 seconds to book. What email should I send it to?"</div>
+        <div class="card-note">Send it while they're on the phone. Don't wait.</div>
+      </div>
+      <div class="card">
+        <div class="close-step">If they stall</div>
+        <div class="card-text">"Tell you what — I'll send the link now and you can pick a time when it's convenient. No follow-up pressure. If it's not a fit after you look at your calendar, no hard feelings."</div>
+        <div class="card-note">Lower the friction. A link in their inbox is better than no commitment.</div>
+      </div>
+      <div class="card green full">
+        <div class="card-label">What the discovery call actually is — set this expectation</div>
+        <div class="card-text">"On the call we'll spend 30 minutes on three things: where your business is losing time, where it's losing money, and whether an autonomous agent is the right answer for those specific problems. You'll leave with clarity on your operation even if we never work together."</div>
+      </div>
+    </div>
+  </div>
+
+</main>
+
+<script>
+function show(id, el) {
+  document.querySelectorAll('.phase').forEach(p => p.classList.remove('visible'));
+  document.getElementById('phase-' + id).classList.add('visible');
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  el.classList.add('active');
+}
+function showObj(id, btn) {
+  document.querySelectorAll('.obj-panel').forEach(p => p.classList.remove('visible'));
+  document.getElementById('or-' + id).classList.add('visible');
+  document.querySelectorAll('.obj-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+</script>
+</body>
+</html>
