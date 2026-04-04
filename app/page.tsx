@@ -77,12 +77,12 @@ export default function Home() {
                 <span style={{ color: "#E8934A", display: "block" }}>AI Operations for HVAC.</span>
                 Set it and forget it.
               </h1>
-              <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.75, marginBottom: "32px" }}>
+              <p style={{ fontSize: "16px", color: "#9AAABB", lineHeight: 1.75, marginBottom: "32px" }}>
                 We map where your business is leaking money, build the AI that plugs the holes, and run it.
                 Discovery call first. Custom-built for your operation. You see results every morning — you never touch a setting.
               </p>
               <button
-                style={{ fontSize: "13px", color: "#9AAABB", background: "none", border: "none", cursor: "pointer", padding: 0 }}
+                style={{ fontSize: "14px", color: "#9AAABB", background: "none", border: "none", cursor: "pointer", padding: 0 }}
                 onClick={() => document.getElementById("how-it-works")?.scrollIntoView({ behavior: "smooth" })}
               >
                 See how it works →
@@ -92,8 +92,8 @@ export default function Home() {
             {/* Right: compact booking form */}
             <div>
               <div style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid #E8934A", borderRadius: "10px", padding: "36px" }}>
-                <p style={{ fontSize: "13px", fontWeight: 600, color: "#F5F3EE", marginBottom: "4px" }}>Book a discovery call</p>
-                <p style={{ fontSize: "12px", color: "#6A7D8E", marginBottom: "20px", lineHeight: 1.5 }}>30 minutes. We map your operation and tell you honestly if we're a fit.</p>
+                <p style={{ fontSize: "14px", fontWeight: 600, color: "#F5F3EE", marginBottom: "4px" }}>Book a discovery call</p>
+                <p style={{ fontSize: "13px", color: "#6A7D8E", marginBottom: "20px", lineHeight: 1.5 }}>30 minutes. We map your operation and tell you honestly if we're a fit.</p>
 
                 {submitted ? (
                   <div style={{ textAlign: "center", padding: "24px 0" }}>
@@ -157,7 +157,7 @@ export default function Home() {
                     >
                       {isSubmitting ? "Sending..." : "Book my discovery call"}
                     </button>
-                    <p style={{ textAlign: "center", fontSize: "11px", color: "#566677" }}>No contracts. No pressure.</p>
+                    <p style={{ textAlign: "center", fontSize: "13px", color: "#566677" }}>No contracts. No pressure.</p>
                   </form>
                 )}
               </div>
@@ -170,19 +170,19 @@ export default function Home() {
         <section style={{ background: "#111E2E", padding: "clamp(48px, 6vw, 64px) clamp(20px, 5vw, 72px)", display: "flex", gap: "48px", flexWrap: "wrap", alignItems: "flex-start" }}>
           <div style={{ flex: "1 1 160px" }}>
             <div style={{ fontSize: "22px", fontWeight: 500, color: "#E8934A" }}>&lt; 60 sec</div>
-            <div style={{ fontSize: "13px", color: "#6A7D8E", marginTop: "6px", lineHeight: 1.6 }}>
+            <div style={{ fontSize: "15px", color: "#6A7D8E", marginTop: "6px", lineHeight: 1.6 }}>
               We respond to every missed contact. Most contractors don't respond for 47+ hours.
             </div>
           </div>
           <div style={{ flex: "1 1 160px" }}>
             <div style={{ fontSize: "22px", fontWeight: 500, color: "#E8934A" }}>$3,900/mo</div>
-            <div style={{ fontSize: "13px", color: "#6A7D8E", marginTop: "6px", lineHeight: 1.6 }}>
+            <div style={{ fontSize: "15px", color: "#6A7D8E", marginTop: "6px", lineHeight: 1.6 }}>
               Average monthly revenue lost to missed calls alone. Every one logged, responded to, recovered.
             </div>
           </div>
           <div style={{ flex: "1 1 160px" }}>
             <div style={{ fontSize: "22px", fontWeight: 500, color: "#E8934A" }}>No migration</div>
-            <div style={{ fontSize: "13px", color: "#6A7D8E", marginTop: "6px", lineHeight: 1.6 }}>
+            <div style={{ fontSize: "15px", color: "#6A7D8E", marginTop: "6px", lineHeight: 1.6 }}>
               Connects with your existing CRM, whatever it is. Your crew never touches it.
             </div>
           </div>
@@ -196,7 +196,7 @@ export default function Home() {
           <h2 style={{ fontSize: "clamp(20px, 3vw, 28px)", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px", textAlign: "center" }}>
             Three steps.
           </h2>
-          <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.65, marginBottom: "40px", textAlign: "center" }}>
+          <p style={{ fontSize: "15px", color: "var(--text-secondary)", lineHeight: 1.65, marginBottom: "40px", textAlign: "center" }}>
             Most contractors are live within a week of their discovery call.
           </p>
           <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
@@ -207,7 +207,7 @@ export default function Home() {
               <div style={{ fontSize: "16px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px" }}>
                 We map your bottlenecks.
               </div>
-              <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
+              <div style={{ fontSize: "15px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
                 30-minute call. We look at where calls and jobs are slipping — which leads go unanswered,
                 which slots go unfilled, which tasks eat your dispatcher's day. We tell you exactly what
                 we'd build and what it would recover. If we're not the right fit, we say that too.
@@ -220,7 +220,7 @@ export default function Home() {
               <div style={{ fontSize: "16px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px" }}>
                 We build it.
               </div>
-              <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
+              <div style={{ fontSize: "15px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
                 We connect to your existing CRM — whatever you're already using — and configure everything
                 to your business. Your service area, your pricing, how you talk to customers. End-to-end
                 tested before anything goes live. You don't touch a single setting.
@@ -233,7 +233,7 @@ export default function Home() {
               <div style={{ fontSize: "16px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px" }}>
                 It gets smarter. You never fall behind.
               </div>
-              <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
+              <div style={{ fontSize: "15px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
                 The system learns from your business over time and improves. As AI tools evolve, we update
                 and upgrade what's running for you automatically. You're never managing software updates or
                 researching what's new — that's our job.
@@ -251,7 +251,7 @@ export default function Home() {
           <h2 style={{ fontSize: "clamp(20px, 3vw, 28px)", fontWeight: 500, color: "#F5F3EE", marginBottom: "12px" }}>
             Everything that runs after we build it.
           </h2>
-          <p style={{ fontSize: "14px", color: "#6A7D8E", lineHeight: 1.65, marginBottom: "40px", maxWidth: "520px" }}>
+          <p style={{ fontSize: "15px", color: "#6A7D8E", lineHeight: 1.65, marginBottom: "40px", maxWidth: "520px" }}>
             The AI we implement isn't a product you buy — it's a custom system we build into your business,
             manage on your behalf, and grow alongside you.
           </p>
@@ -306,7 +306,7 @@ export default function Home() {
                     {item.title}
                   </span>
                 </div>
-                <p style={{ fontSize: "13px", color: "#6A7D8E", lineHeight: 1.7, margin: "0 0 0 26px" }}>
+                <p style={{ fontSize: "14px", color: "#6A7D8E", lineHeight: 1.7, margin: "0 0 0 26px" }}>
                   {item.body}
                 </p>
               </div>
@@ -331,13 +331,13 @@ export default function Home() {
               ].map((item, i) => (
                 <div key={i} style={{ display: "flex", alignItems: "flex-start", gap: "14px" }}>
                   <span style={{ fontSize: "13px", fontWeight: 600, color: "#1A7A4A", flexShrink: 0, marginTop: "1px" }}>✓</span>
-                  <span style={{ fontSize: "14px", color: "#5A6470", lineHeight: 1.7 }}>{item}</span>
+                  <span style={{ fontSize: "15px", color: "#5A6470", lineHeight: 1.7 }}>{item}</span>
                 </div>
               ))}
             </div>
             <div style={{ display: "flex", gap: "16px", flexWrap: "wrap", marginBottom: "28px" }}>
               {["Works with any CRM", "Custom-built for your operation", "No generic packages"].map((badge) => (
-                <span key={badge} style={{ fontSize: "13px", color: "#1A7A4A", display: "flex", alignItems: "center", gap: "6px" }}>
+                <span key={badge} style={{ fontSize: "14px", color: "#1A7A4A", display: "flex", alignItems: "center", gap: "6px" }}>
                   <span style={{ fontWeight: 600 }}>✓</span> {badge}
                 </span>
               ))}
@@ -359,7 +359,7 @@ export default function Home() {
           <h2 style={{ fontSize: "clamp(20px, 3vw, 28px)", fontWeight: 500, color: "#F5F3EE", marginBottom: "16px" }}>
             Scoped on the call. Transparent before you pay.
           </h2>
-          <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.8, maxWidth: "560px", marginBottom: "12px" }}>
+          <p style={{ fontSize: "16px", color: "#9AAABB", lineHeight: 1.8, maxWidth: "560px", marginBottom: "12px" }}>
             Engagements start at $1,500/month depending on scope. Some contractors need one agent.
             Some need four. We scope everything on the discovery call and send a proposal within 24 hours —
             you know exactly what you're getting before any money changes hands.
@@ -380,7 +380,7 @@ export default function Home() {
               <h2 style={{ fontSize: "clamp(22px, 3.5vw, 32px)", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px", lineHeight: 1.25 }}>
                 Let's talk. 30 minutes.
               </h2>
-              <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.7 }}>
+              <p style={{ fontSize: "15px", color: "var(--text-secondary)", lineHeight: 1.7 }}>
                 We'll map your operation, identify where AI makes the most sense for your business,
                 and walk you through exactly what we'd build. You'll leave with a clear picture of what's possible.
               </p>
@@ -399,7 +399,7 @@ export default function Home() {
                 <form onSubmit={handleSubmit} style={{ display: "flex", flexDirection: "column", gap: "24px" }}>
 
                   <div>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
+                    <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
                       Business name <span style={{ color: "#E85A4A" }}>*</span>
                     </label>
                     <input
@@ -414,7 +414,7 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
+                    <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
                       Your name <span style={{ color: "#E85A4A" }}>*</span>
                     </label>
                     <input
@@ -430,7 +430,7 @@ export default function Home() {
 
                   <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "20px" }}>
                     <div>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
+                      <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
                         Email <span style={{ color: "#E85A4A" }}>*</span>
                       </label>
                       <input
@@ -444,7 +444,7 @@ export default function Home() {
                       />
                     </div>
                     <div>
-                      <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
+                      <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "7px" }}>
                         Phone <span style={{ color: "#E85A4A" }}>*</span>
                       </label>
                       <input
@@ -460,10 +460,10 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
+                    <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
                       What scheduling software do you use? <span style={{ color: "#E85A4A" }}>*</span>
                     </label>
-                    <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "7px", marginTop: "0" }}>
+                    <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "7px", marginTop: "0" }}>
                       So we can confirm how we'd connect before we talk.
                     </p>
                     <select
@@ -482,11 +482,11 @@ export default function Home() {
                   </div>
 
                   <div>
-                    <label style={{ display: "block", fontSize: "13px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
+                    <label style={{ display: "block", fontSize: "14px", fontWeight: 600, color: "var(--text-primary)", marginBottom: "4px" }}>
                       How many techs do you run?{" "}
                       <span style={{ color: "var(--text-secondary)", fontWeight: 400 }}>(optional)</span>
                     </label>
-                    <p style={{ fontSize: "12px", color: "var(--text-secondary)", marginBottom: "7px", marginTop: "0" }}>
+                    <p style={{ fontSize: "13px", color: "var(--text-secondary)", marginBottom: "7px", marginTop: "0" }}>
                       Helps us size the right build for your operation.
                     </p>
                     <input
@@ -523,7 +523,7 @@ export default function Home() {
                     {isSubmitting ? "Sending..." : "Book my discovery call"}
                   </button>
 
-                  <p style={{ textAlign: "center", fontSize: "12px", color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>
+                  <p style={{ textAlign: "center", fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.6, margin: 0 }}>
                     We'll confirm your time by end of day. Just 30 minutes.
                   </p>
 
@@ -537,8 +537,8 @@ export default function Home() {
 
       {/* ── FOOTER ── */}
       <footer style={{ background: "#111E2E", padding: "20px 32px", display: "flex", justifyContent: "space-between", alignItems: "center", flexWrap: "wrap", gap: "8px" }}>
-        <span style={{ fontSize: "12px", color: "#6A7D8E" }}>Workfloor · Cedar Rapids, IA</span>
-        <span style={{ fontSize: "12px", color: "#6A7D8E" }}>AI operations for HVAC contractors</span>
+        <span style={{ fontSize: "13px", color: "#6A7D8E" }}>Workfloor · Cedar Rapids, IA</span>
+        <span style={{ fontSize: "13px", color: "#6A7D8E" }}>AI operations for HVAC contractors</span>
       </footer>
     </>
   );
