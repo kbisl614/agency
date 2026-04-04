@@ -69,7 +69,7 @@ export default function Home() {
           <div style={{ display: "flex", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start", flexWrap: "wrap" }}>
 
             {/* Left: headline + copy */}
-            <div style={{ flex: "1 1 340px", maxWidth: "560px" }}>
+            <div style={{ flex: "0 1 420px" }}>
               <p style={{ fontSize: "12px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "20px" }}>
                 For HVAC contractors with 5–20 techs
               </p>
@@ -89,8 +89,8 @@ export default function Home() {
             </div>
 
             {/* Right: compact booking form */}
-            <div style={{ flex: "1 1 320px", maxWidth: "420px" }}>
-              <div style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid #E8934A", borderRadius: "10px", padding: "28px" }}>
+            <div style={{ flex: "1 1 500px", maxWidth: "580px" }}>
+              <div style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid #E8934A", borderRadius: "10px", padding: "36px" }}>
                 <p style={{ fontSize: "13px", fontWeight: 600, color: "#F5F3EE", marginBottom: "4px" }}>Book a discovery call</p>
                 <p style={{ fontSize: "12px", color: "#6A7D8E", marginBottom: "20px", lineHeight: 1.5 }}>30 minutes. We map your operation and tell you honestly if we're a fit.</p>
 
@@ -198,15 +198,15 @@ export default function Home() {
           <p style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.65, marginBottom: "40px", textAlign: "center" }}>
             Most contractors are live within a week of their discovery call.
           </p>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))", gap: "20px" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))", gap: "20px" }}>
 
             {/* Step 1 */}
-            <div style={{ background: "#fff", border: "0.5px solid var(--border-subtle)", borderRadius: "10px", padding: "32px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 600, color: "#E8934A", letterSpacing: "1px", marginBottom: "14px" }}>01</div>
-              <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px" }}>
+            <div style={{ background: "#fff", border: "0.5px solid var(--border-subtle)", borderRadius: "10px", padding: "40px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "#E8934A", letterSpacing: "1px", marginBottom: "16px" }}>01</div>
+              <div style={{ fontSize: "16px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px" }}>
                 We map your bottlenecks.
               </div>
-              <div style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.7 }}>
+              <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
                 30-minute call. We look at where calls and jobs are slipping — which leads go unanswered,
                 which slots go unfilled, which tasks eat your dispatcher's day. We tell you exactly what
                 we'd build and what it would recover. If we're not the right fit, we say that too.
@@ -214,12 +214,12 @@ export default function Home() {
             </div>
 
             {/* Step 2 */}
-            <div style={{ background: "#fff", border: "0.5px solid var(--border-subtle)", borderRadius: "10px", padding: "32px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 600, color: "#E8934A", letterSpacing: "1px", marginBottom: "14px" }}>02</div>
-              <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px" }}>
+            <div style={{ background: "#fff", border: "0.5px solid var(--border-subtle)", borderRadius: "10px", padding: "40px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "#E8934A", letterSpacing: "1px", marginBottom: "16px" }}>02</div>
+              <div style={{ fontSize: "16px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px" }}>
                 We build it.
               </div>
-              <div style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.7 }}>
+              <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
                 We connect to your existing CRM — whatever you're already using — and configure everything
                 to your business. Your service area, your pricing, how you talk to customers. End-to-end
                 tested before anything goes live. You don't touch a single setting.
@@ -227,12 +227,12 @@ export default function Home() {
             </div>
 
             {/* Step 3 */}
-            <div style={{ background: "#fff", border: "0.5px solid var(--border-subtle)", borderRadius: "10px", padding: "32px" }}>
-              <div style={{ fontSize: "11px", fontWeight: 600, color: "#E8934A", letterSpacing: "1px", marginBottom: "14px" }}>03</div>
-              <div style={{ fontSize: "15px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "10px" }}>
+            <div style={{ background: "#fff", border: "0.5px solid var(--border-subtle)", borderRadius: "10px", padding: "40px" }}>
+              <div style={{ fontSize: "12px", fontWeight: 600, color: "#E8934A", letterSpacing: "1px", marginBottom: "16px" }}>03</div>
+              <div style={{ fontSize: "16px", fontWeight: 500, color: "var(--text-primary)", marginBottom: "12px" }}>
                 It gets smarter. You never fall behind.
               </div>
-              <div style={{ fontSize: "13px", color: "var(--text-secondary)", lineHeight: 1.7 }}>
+              <div style={{ fontSize: "14px", color: "var(--text-secondary)", lineHeight: 1.75 }}>
                 The system learns from your business over time and improves. As AI tools evolve, we update
                 and upgrade what's running for you automatically. You're never managing software updates or
                 researching what's new — that's our job.
@@ -243,7 +243,7 @@ export default function Home() {
         </section>
 
         {/* ── WHAT'S INCLUDED ── */}
-        <section style={{ padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)", background: "#1A2535" }}>
+        <section style={{ padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px) clamp(36px, 5vw, 52px)", background: "#1A2535" }}>
           <p style={{ fontSize: "11px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "12px" }}>
             What's included
           </p>
@@ -314,7 +314,7 @@ export default function Home() {
         </section>
 
         {/* ── WHAT TO EXPECT (replaces guarantee) ── */}
-        <section style={{ padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)", background: "var(--bg-primary)" }}>
+        <section style={{ padding: "clamp(36px, 5vw, 52px) clamp(20px, 5vw, 72px) clamp(64px, 8vw, 96px)", background: "var(--bg-primary)" }}>
           <div style={{ background: "#F5F2EE", border: "1.5px solid #E8934A", borderRadius: "10px", padding: "clamp(28px, 4vw, 48px)", maxWidth: "660px", margin: "0 auto" }}>
             <p style={{ fontSize: "11px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.4px", textTransform: "uppercase", marginBottom: "12px" }}>
               How it works for you
