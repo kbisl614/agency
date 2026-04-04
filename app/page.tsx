@@ -66,15 +66,16 @@ export default function Home() {
 
         {/* ── HERO ── */}
         <section style={{ background: "#1A2535", padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start" }}>
 
             {/* Left: headline + copy */}
             <div>
               <p style={{ fontSize: "12px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "20px" }}>
                 For HVAC contractors with 5–20 techs
               </p>
-              <h1 style={{ fontSize: "clamp(28px, 4vw, 46px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.15, marginBottom: "24px" }}>
-                <span style={{ color: "#E8934A" }}>AI Operations for HVAC.</span> Set it and forget it.
+              <h1 style={{ fontSize: "clamp(28px, 4vw, 46px)", fontWeight: 500, color: "#F5F3EE", lineHeight: 1.2, marginBottom: "24px" }}>
+                <span style={{ color: "#E8934A", display: "block" }}>AI Operations for HVAC.</span>
+                Set it and forget it.
               </h1>
               <p style={{ fontSize: "15px", color: "#9AAABB", lineHeight: 1.75, marginBottom: "32px" }}>
                 We map where your business is leaking money, build the AI that plugs the holes, and run it.
