@@ -66,7 +66,7 @@ export default function Home() {
 
         {/* ── HERO ── */}
         <section style={{ background: "#1A2535", padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)" }}>
-          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.2fr", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 0.85fr", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start" }}>
 
             {/* Left: headline + copy */}
             <div>
