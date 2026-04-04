@@ -66,10 +66,10 @@ export default function Home() {
 
         {/* ── HERO ── */}
         <section style={{ background: "#1A2535", padding: "clamp(64px, 8vw, 96px) clamp(20px, 5vw, 72px)" }}>
-          <div style={{ display: "flex", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start", flexWrap: "wrap" }}>
+          <div style={{ display: "grid", gridTemplateColumns: "1fr 1.6fr", gap: "clamp(40px, 6vw, 72px)", alignItems: "flex-start" }}>
 
             {/* Left: headline + copy */}
-            <div style={{ flex: "0 1 420px" }}>
+            <div>
               <p style={{ fontSize: "12px", fontWeight: 500, color: "#E8934A", letterSpacing: "1.5px", textTransform: "uppercase", marginBottom: "20px" }}>
                 For HVAC contractors with 5–20 techs
               </p>
@@ -89,7 +89,7 @@ export default function Home() {
             </div>
 
             {/* Right: compact booking form */}
-            <div style={{ flex: "1 1 500px", maxWidth: "580px" }}>
+            <div>
               <div style={{ background: "rgba(255,255,255,0.05)", border: "1.5px solid #E8934A", borderRadius: "10px", padding: "36px" }}>
                 <p style={{ fontSize: "13px", fontWeight: 600, color: "#F5F3EE", marginBottom: "4px" }}>Book a discovery call</p>
                 <p style={{ fontSize: "12px", color: "#6A7D8E", marginBottom: "20px", lineHeight: 1.5 }}>30 minutes. We map your operation and tell you honestly if we're a fit.</p>
